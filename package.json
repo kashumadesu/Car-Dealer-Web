@@ -7,7 +7,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node server/index.js",
     "client": "npm --prefix client run dev",
-    "build": "npm --prefix client run build"
+    "build": "cd client && npm run build",
+    "postinstall": "cd client && npm install"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
   "author": "DriveHub Development Team",
   "license": "MIT",
   "dependencies": {
-    "concurrently": "^10.0.5",
+    "concurrently": "^9.1.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
