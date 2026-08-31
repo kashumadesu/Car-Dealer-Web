@@ -9,8 +9,6 @@ import {
 export default function FilterSidebar({ 
   filters, 
   setFilters, 
-  categories, 
-  totalCount,
   onReset 
 }) {
   const handleFilterChange = (key, value) => {
@@ -18,10 +16,6 @@ export default function FilterSidebar({
   };
 
   const activeTags = [];
-  if (filters.category && filters.category !== 'all') {
-    const cat = categories.find(c => c.id === filters.category);
-    activeTags.push({ key: 'category', label: cat ? cat.name : filters.category });
-  }
   if (filters.maxPrice) {
     activeTags.push({ key: 'maxPrice', label: `≤ ₱${Number(filters.maxPrice).toLocaleString()}` });
   }
@@ -85,11 +79,11 @@ export default function FilterSidebar({
 
       {/* Keyword Search */}
       <div>
-        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Search</label>
+        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Search Showroom</label>
         <div className="relative">
           <input
             type="text"
-            placeholder="e.g. Vios, CR-V, SUV..."
+            placeholder="e.g. Vios, CR-V, Ranger..."
             value={filters.search || ''}
             onChange={(e) => handleFilterChange('search', e.target.value)}
             className="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-7 pr-6 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-rose-500 focus:bg-white"
@@ -106,44 +100,12 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Category List */}
-      <div>
-        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Category</label>
-        <div className="space-y-0.5 text-xs">
-          <button
-            onClick={() => handleFilterChange('category', 'all')}
-            className={`w-full flex items-center justify-between px-2 py-1 rounded text-left transition-colors ${
-              filters.category === 'all' ? 'bg-rose-600 text-white font-bold' : 'text-zinc-600 hover:bg-zinc-100'
-            }`}
-          >
-            <span>All Categories</span>
-            <span className={`text-[10px] px-1.5 rounded ${filters.category === 'all' ? 'bg-rose-700 text-white' : 'text-zinc-400'}`}>
-              {totalCount}
-            </span>
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => handleFilterChange('category', c.id)}
-              className={`w-full flex items-center justify-between px-2 py-1 rounded text-left transition-colors ${
-                filters.category === c.id ? 'bg-rose-600 text-white font-bold' : 'text-zinc-600 hover:bg-zinc-100'
-              }`}
-            >
-              <span>{c.name}</span>
-              <span className={`text-[10px] px-1.5 rounded ${filters.category === c.id ? 'bg-rose-700 text-white' : 'text-zinc-400'}`}>
-                {c.count}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Price Slider */}
+      {/* Budget / Price Slider */}
       <div>
         <div className="flex items-center justify-between mb-1 text-xs">
-          <span className="font-bold text-zinc-600 uppercase text-[11px]">Budget</span>
+          <span className="font-bold text-zinc-600 uppercase text-[11px]">Budget Limit</span>
           <span className="font-bold text-rose-600">
-            {filters.maxPrice ? `≤ ₱${Number(filters.maxPrice).toLocaleString()}` : 'Any'}
+            {filters.maxPrice ? `≤ ₱${Number(filters.maxPrice).toLocaleString()}` : 'Any Price'}
           </span>
         </div>
         <input
@@ -157,6 +119,7 @@ export default function FilterSidebar({
         />
         <div className="flex justify-between text-[10px] text-zinc-400 mt-0.5">
           <span>₱500k</span>
+          <span>₱1.2M</span>
           <span>₱2M+</span>
         </div>
       </div>
@@ -175,7 +138,7 @@ export default function FilterSidebar({
                   : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              {t === 'all' ? 'All' : t.slice(0, 4)}
+              {t === 'all' ? 'All' : t === 'Automatic' ? 'Auto' : 'Manual'}
             </button>
           ))}
         </div>
@@ -195,7 +158,7 @@ export default function FilterSidebar({
                   : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              {f === 'all' ? 'All' : f.slice(0, 3)}
+              {f === 'all' ? 'All' : f === 'Gasoline' ? 'Gas' : 'Diesel'}
             </button>
           ))}
         </div>
