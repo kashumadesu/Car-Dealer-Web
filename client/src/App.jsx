@@ -171,7 +171,9 @@ function AppContent() {
         ) : activeTab === 'categories' ? (
           <CategoriesView
             categories={categories}
-            onSelectCategory={handleCategorySelect}
+            vehicles={vehicles}
+            onSelectVehicle={handleSelectVehicle}
+            onOpenChat={handleOpenLiveChat}
           />
         ) : activeTab === 'team' ? (
           <TeamSection
