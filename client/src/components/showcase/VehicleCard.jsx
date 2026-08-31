@@ -24,19 +24,19 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
     switch (status) {
       case 'AVAILABLE':
         return (
-          <span className="bg-emerald-600 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
+          <span className="bg-emerald-600 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-xs">
             Available
           </span>
         );
       case 'RESERVED':
         return (
-          <span className="bg-amber-500 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
+          <span className="bg-amber-500 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-xs">
             Reserved
           </span>
         );
       case 'SOLD':
         return (
-          <span className="bg-zinc-700 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
+          <span className="bg-zinc-700 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-xs">
             Sold
           </span>
         );
@@ -46,42 +46,45 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
   };
 
   return (
-    <div className="group bg-white rounded-2xl border-2 border-zinc-200 hover:border-rose-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between text-left">
+    <div className="group bg-white rounded-xl border border-zinc-200 hover:border-zinc-300 shadow-xs hover:shadow-md transition-all duration-150 overflow-hidden flex flex-col justify-between text-left">
       <div>
-        {/* Car Photography */}
-        <div className="relative aspect-16/10 overflow-hidden bg-zinc-100 cursor-pointer" onClick={() => onSelectVehicle(vehicle)}>
+        {/* Car Image with Clean 16:10 Ratio */}
+        <div 
+          className="relative aspect-16/10 overflow-hidden bg-zinc-100 cursor-pointer" 
+          onClick={() => onSelectVehicle(vehicle)}
+        >
           <img
-            src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'}
+            src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'}
             alt={`${vehicle.brand} ${vehicle.model}`}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-250"
           />
 
           {/* Badges Overlay */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+          <div className="absolute top-2 left-2 flex items-center space-x-1.5 z-10">
             {getStatusBadge(vehicle.status)}
             {vehicle.isNewArrival && (
-              <span className="bg-rose-600 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
-                New Arrival
+              <span className="bg-rose-600 text-white text-[10px] uppercase font-bold px-1.5 py-0.5 rounded shadow-xs">
+                New
               </span>
             )}
           </div>
 
           {/* Compare & Favorite Buttons */}
-          <div className="absolute top-3 right-3 flex items-center space-x-2 z-10">
+          <div className="absolute top-2 right-2 flex items-center space-x-1.5 z-10">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 compared ? removeFromCompare(vehicle.id) : addToCompare(vehicle);
               }}
-              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
+              className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
                 compared 
                   ? 'bg-rose-600 text-white shadow' 
-                  : 'bg-zinc-950/70 text-white hover:bg-zinc-950'
+                  : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
               }`}
-              title={compared ? 'Remove from compare' : 'Add to compare'}
+              title={compared ? 'Remove compare' : 'Add to compare'}
             >
-              <GitCompare className="w-4 h-4" />
+              <GitCompare className="w-3 h-3" />
             </button>
 
             <button
@@ -90,93 +93,87 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
                 e.stopPropagation();
                 toggleFavorite(vehicle);
               }}
-              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
+              className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
                 favorited 
                   ? 'bg-rose-600 text-white shadow' 
-                  : 'bg-zinc-950/70 text-white hover:bg-zinc-950'
+                  : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
               }`}
-              title={favorited ? 'Remove from favorites' : 'Save to favorites'}
+              title={favorited ? 'Remove favorite' : 'Add favorite'}
             >
-              <Heart className={`w-4 h-4 ${favorited ? 'fill-current' : ''}`} />
+              <Heart className={`w-3 h-3 ${favorited ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* Card Body */}
-        <div className="p-5 space-y-3">
-          {/* Category & Verified Tag */}
-          <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span className="uppercase font-bold tracking-wider text-xs text-zinc-500">
+        {/* Compact Card Body */}
+        <div className="p-3.5 space-y-2">
+          <div className="flex items-center justify-between text-[11px] text-zinc-400 font-medium">
+            <span className="uppercase tracking-wider">
               {vehicle.categoryId} • {vehicle.condition}
             </span>
-            <span className="flex items-center space-x-1 text-emerald-700 font-bold text-xs">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Verified Title</span>
+            <span className="flex items-center space-x-0.5 text-emerald-600 font-semibold">
+              <ShieldCheck className="w-3 h-3" />
+              <span>Verified</span>
             </span>
           </div>
 
-          {/* Vehicle Title */}
           <div>
             <h3 
               onClick={() => onSelectVehicle(vehicle)}
-              className="text-base sm:text-lg font-black text-zinc-900 hover:text-rose-600 cursor-pointer line-clamp-1 transition-colors tracking-tight"
+              className="text-sm font-bold text-zinc-900 hover:text-rose-600 cursor-pointer line-clamp-1 transition-colors leading-snug"
             >
               {vehicle.year} {vehicle.brand} {vehicle.model}
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-600 font-medium line-clamp-1 mt-0.5">{vehicle.variant}</p>
+            <p className="text-xs text-zinc-500 line-clamp-1">{vehicle.variant}</p>
           </div>
 
-          {/* Price Tag */}
-          <div className="flex items-baseline space-x-2 pt-1">
-            <span className="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
+          {/* Price */}
+          <div className="flex items-baseline space-x-1.5 pt-0.5">
+            <span className="text-base font-black text-rose-600 tracking-tight">
               ₱{vehicle.price.toLocaleString()}
             </span>
             {vehicle.previousPrice && (
-              <span className="text-xs sm:text-sm text-zinc-400 line-through font-semibold">
+              <span className="text-[11px] text-zinc-400 line-through">
                 ₱{vehicle.previousPrice.toLocaleString()}
               </span>
             )}
           </div>
 
-          {/* 4-Grid Key Specs with High Readability */}
-          <div className="grid grid-cols-2 gap-2.5 py-3 border-t border-b border-zinc-200 text-xs sm:text-sm text-zinc-800 font-medium">
-            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
-              <Calendar className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="truncate">{vehicle.year} Model</span>
+          {/* Compact 3-Bullet Specs */}
+          <div className="flex items-center justify-between text-[11px] text-zinc-600 pt-2 border-t border-zinc-100">
+            <div className="flex items-center space-x-1">
+              <Gauge className="w-3 h-3 text-zinc-400" />
+              <span>{vehicle.mileage.toLocaleString()} km</span>
             </div>
-            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
-              <Gauge className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="truncate">{vehicle.mileage.toLocaleString()} km</span>
+            <div className="flex items-center space-x-1">
+              <Cog className="w-3 h-3 text-zinc-400" />
+              <span>{vehicle.transmission}</span>
             </div>
-            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
-              <Cog className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="truncate">{vehicle.transmission}</span>
-            </div>
-            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
-              <Fuel className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="truncate">{vehicle.fuelType}</span>
+            <div className="flex items-center space-x-1">
+              <Fuel className="w-3 h-3 text-zinc-400" />
+              <span>{vehicle.fuelType}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Action Footer */}
-      <div className="px-5 pb-5 pt-1 flex items-center space-x-2.5">
+      {/* Action Buttons */}
+      <div className="p-3 pt-0 flex items-center space-x-2">
         <button
           onClick={() => onSelectVehicle(vehicle)}
-          className="flex-1 bg-zinc-950 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
+          className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold py-2 px-2.5 rounded-lg flex items-center justify-center space-x-1 transition-colors"
         >
           <span>View Details</span>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3 h-3" />
         </button>
 
         <button
           onClick={() => onOpenChat(vehicle)}
-          className="bg-rose-50 hover:bg-rose-100 text-rose-600 border-2 border-rose-200 text-xs sm:text-sm font-bold py-3 px-4 rounded-xl transition-colors flex items-center space-x-1"
-          title="Inquire about this vehicle"
+          className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold py-2 px-2.5 rounded-lg transition-colors flex items-center space-x-1"
+          title="Inquire about this unit"
         >
-          <MessageSquare className="w-4 h-4" />
-          <span>Inquire</span>
+          <MessageSquare className="w-3 h-3" />
+          <span>Chat</span>
         </button>
       </div>
     </div>

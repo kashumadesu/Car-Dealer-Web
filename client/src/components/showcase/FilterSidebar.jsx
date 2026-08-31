@@ -3,15 +3,13 @@ import {
   Filter, 
   RotateCcw, 
   X, 
-  Search, 
-  ChevronDown
+  Search
 } from 'lucide-react';
 
 export default function FilterSidebar({ 
   filters, 
   setFilters, 
   categories, 
-  availableCount, 
   totalCount,
   onReset 
 }) {
@@ -19,17 +17,13 @@ export default function FilterSidebar({
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  // Active filter tags calculation
   const activeTags = [];
   if (filters.category && filters.category !== 'all') {
     const cat = categories.find(c => c.id === filters.category);
-    activeTags.push({ key: 'category', label: `Category: ${cat ? cat.name : filters.category}` });
-  }
-  if (filters.brand && filters.brand !== 'all') {
-    activeTags.push({ key: 'brand', label: `Brand: ${filters.brand}` });
+    activeTags.push({ key: 'category', label: cat ? cat.name : filters.category });
   }
   if (filters.maxPrice) {
-    activeTags.push({ key: 'maxPrice', label: `Max ₱${Number(filters.maxPrice).toLocaleString()}` });
+    activeTags.push({ key: 'maxPrice', label: `≤ ₱${Number(filters.maxPrice).toLocaleString()}` });
   }
   if (filters.transmission && filters.transmission !== 'all') {
     activeTags.push({ key: 'transmission', label: filters.transmission });
@@ -50,63 +44,63 @@ export default function FilterSidebar({
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-zinc-200 p-6 space-y-6 text-left shadow-sm">
+    <div className="bg-white rounded-xl border border-zinc-200 p-4 space-y-4 text-left shadow-xs">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-zinc-200">
-        <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-rose-600" />
-          <h3 className="text-base font-black text-zinc-900 uppercase tracking-tight">Filter Inventory</h3>
+      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100">
+        <div className="flex items-center space-x-1.5">
+          <Filter className="w-4 h-4 text-rose-600" />
+          <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Filters</h3>
         </div>
 
         {activeTags.length > 0 && (
           <button
             onClick={onReset}
-            className="flex items-center space-x-1 text-xs text-rose-600 hover:text-rose-700 font-bold"
+            className="flex items-center space-x-1 text-[11px] text-rose-600 hover:text-rose-700 font-semibold"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset All</span>
+            <RotateCcw className="w-3 h-3" />
+            <span>Reset</span>
           </button>
         )}
       </div>
 
-      {/* Active Filter Tags */}
+      {/* Active Tags */}
       {activeTags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1">
           {activeTags.map((tag) => (
             <span
               key={tag.key}
-              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold"
+              className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-semibold"
             >
               <span>{tag.label}</span>
               <button
                 onClick={() => removeFilterTag(tag.key)}
                 className="hover:bg-rose-200 rounded-full p-0.5"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-2.5 h-2.5" />
               </button>
             </span>
           ))}
         </div>
       )}
 
-      {/* Keyword Search Input */}
+      {/* Keyword Search */}
       <div>
-        <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2">Search Showroom</label>
+        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Search</label>
         <div className="relative">
           <input
             type="text"
-            placeholder="Search Vios, CR-V, Ranger, SUV..."
+            placeholder="e.g. Vios, CR-V, SUV..."
             value={filters.search || ''}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="w-full bg-zinc-50 border-2 border-zinc-300 rounded-xl pl-9 pr-8 py-2.5 text-sm text-zinc-900 font-medium focus:outline-none focus:border-rose-500 focus:bg-white"
+            className="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-7 pr-6 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-rose-500 focus:bg-white"
           />
-          <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-3" />
+          <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2 top-2" />
           {filters.search && (
             <button
               onClick={() => handleFilterChange('search', '')}
-              className="absolute right-3 top-3 text-zinc-400 hover:text-zinc-700"
+              className="absolute right-2 top-2 text-zinc-400 hover:text-zinc-600"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3 h-3" />
             </button>
           )}
         </div>
@@ -114,16 +108,16 @@ export default function FilterSidebar({
 
       {/* Category List */}
       <div>
-        <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2">Category</label>
-        <div className="space-y-1.5 text-sm font-medium">
+        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Category</label>
+        <div className="space-y-0.5 text-xs">
           <button
             onClick={() => handleFilterChange('category', 'all')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
-              filters.category === 'all' ? 'bg-rose-600 text-white font-bold' : 'text-zinc-700 hover:bg-zinc-100'
+            className={`w-full flex items-center justify-between px-2 py-1 rounded text-left transition-colors ${
+              filters.category === 'all' ? 'bg-rose-600 text-white font-bold' : 'text-zinc-600 hover:bg-zinc-100'
             }`}
           >
             <span>All Categories</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${filters.category === 'all' ? 'bg-white text-rose-600 font-black' : 'bg-zinc-100 text-zinc-500'}`}>
+            <span className={`text-[10px] px-1.5 rounded ${filters.category === 'all' ? 'bg-rose-700 text-white' : 'text-zinc-400'}`}>
               {totalCount}
             </span>
           </button>
@@ -131,12 +125,12 @@ export default function FilterSidebar({
             <button
               key={c.id}
               onClick={() => handleFilterChange('category', c.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
-                filters.category === c.id ? 'bg-rose-600 text-white font-bold' : 'text-zinc-700 hover:bg-zinc-100'
+              className={`w-full flex items-center justify-between px-2 py-1 rounded text-left transition-colors ${
+                filters.category === c.id ? 'bg-rose-600 text-white font-bold' : 'text-zinc-600 hover:bg-zinc-100'
               }`}
             >
               <span>{c.name}</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${filters.category === c.id ? 'bg-white text-rose-600 font-black' : 'bg-zinc-100 text-zinc-500'}`}>
+              <span className={`text-[10px] px-1.5 rounded ${filters.category === c.id ? 'bg-rose-700 text-white' : 'text-zinc-400'}`}>
                 {c.count}
               </span>
             </button>
@@ -146,10 +140,10 @@ export default function FilterSidebar({
 
       {/* Price Slider */}
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-bold text-zinc-800 uppercase tracking-wider">Max Budget</label>
-          <span className="text-sm font-black text-rose-600">
-            {filters.maxPrice ? `₱${Number(filters.maxPrice).toLocaleString()}` : 'Any Price'}
+        <div className="flex items-center justify-between mb-1 text-xs">
+          <span className="font-bold text-zinc-600 uppercase text-[11px]">Budget</span>
+          <span className="font-bold text-rose-600">
+            {filters.maxPrice ? `≤ ₱${Number(filters.maxPrice).toLocaleString()}` : 'Any'}
           </span>
         </div>
         <input
@@ -159,80 +153,51 @@ export default function FilterSidebar({
           step="50000"
           value={filters.maxPrice || 2000000}
           onChange={(e) => handleFilterChange('maxPrice', e.target.value >= 2000000 ? '' : e.target.value)}
-          className="w-full accent-rose-600 cursor-pointer h-2 bg-zinc-200 rounded-lg"
+          className="w-full accent-rose-600 cursor-pointer h-1.5 bg-zinc-200 rounded"
         />
-        <div className="flex justify-between text-xs text-zinc-500 font-semibold mt-1">
+        <div className="flex justify-between text-[10px] text-zinc-400 mt-0.5">
           <span>₱500k</span>
-          <span>₱1.2M</span>
           <span>₱2M+</span>
         </div>
       </div>
 
-      {/* Transmission Selector */}
+      {/* Transmission */}
       <div>
-        <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2">Transmission</label>
-        <div className="grid grid-cols-3 gap-2 text-xs font-bold">
+        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Transmission</label>
+        <div className="grid grid-cols-3 gap-1 text-xs font-medium">
           {['all', 'Automatic', 'Manual'].map((t) => (
             <button
               key={t}
               onClick={() => handleFilterChange('transmission', t)}
-              className={`py-2 px-2 rounded-lg border-2 text-center transition-colors ${
+              className={`py-1 px-1 rounded border text-center transition-colors text-[11px] ${
                 filters.transmission === t
-                  ? 'border-rose-600 bg-rose-600 text-white'
-                  : 'border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                  ? 'border-rose-600 bg-rose-600 text-white font-bold'
+                  : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              {t === 'all' ? 'All' : t}
+              {t === 'all' ? 'All' : t.slice(0, 4)}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Fuel Type Selector */}
+      {/* Fuel Type */}
       <div>
-        <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2">Fuel Type</label>
-        <div className="grid grid-cols-3 gap-2 text-xs font-bold">
+        <label className="block text-[11px] font-bold text-zinc-600 uppercase mb-1">Fuel Type</label>
+        <div className="grid grid-cols-3 gap-1 text-xs font-medium">
           {['all', 'Gasoline', 'Diesel'].map((f) => (
             <button
               key={f}
               onClick={() => handleFilterChange('fuelType', f)}
-              className={`py-2 px-2 rounded-lg border-2 text-center transition-colors ${
+              className={`py-1 px-1 rounded border text-center transition-colors text-[11px] ${
                 filters.fuelType === f
-                  ? 'border-rose-600 bg-rose-600 text-white'
-                  : 'border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                  ? 'border-rose-600 bg-rose-600 text-white font-bold'
+                  : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              {f === 'all' ? 'All' : f}
+              {f === 'all' ? 'All' : f.slice(0, 3)}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Inventory Status */}
-      <div className="pt-2 border-t border-zinc-200">
-        <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2.5">Status</label>
-        <div className="space-y-2 text-xs font-semibold">
-          <label className="flex items-center space-x-2.5 cursor-pointer text-zinc-800">
-            <input
-              type="radio"
-              name="statusFilter"
-              checked={!filters.status || filters.status === 'AVAILABLE'}
-              onChange={() => handleFilterChange('status', 'AVAILABLE')}
-              className="accent-rose-600 w-4 h-4"
-            />
-            <span>Available Showroom Units Only</span>
-          </label>
-
-          <label className="flex items-center space-x-2.5 cursor-pointer text-zinc-600">
-            <input
-              type="radio"
-              name="statusFilter"
-              checked={filters.status === 'ALL'}
-              onChange={() => handleFilterChange('status', 'ALL')}
-              className="accent-rose-600 w-4 h-4"
-            />
-            <span>Include Reserved & Sold Units</span>
-          </label>
         </div>
       </div>
     </div>

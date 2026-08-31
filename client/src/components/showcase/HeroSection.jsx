@@ -5,7 +5,6 @@ import {
   ShieldCheck, 
   Users, 
   Headphones, 
-  Award,
   Sparkles,
   Layers
 } from 'lucide-react';
@@ -38,7 +37,6 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
       maxPrice
     });
 
-    // Smooth scroll down to catalog results
     const catalogEl = document.getElementById('catalog-section');
     if (catalogEl) {
       catalogEl.scrollIntoView({ behavior: 'smooth' });
@@ -46,40 +44,36 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
   };
 
   return (
-    <div className="relative bg-zinc-950 text-white overflow-hidden border-b border-zinc-800">
-      {/* Background Subtle Gradient Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-950/40 via-zinc-950 to-zinc-950 pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+    <section className="relative bg-zinc-950 text-white overflow-hidden border-b border-zinc-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Text & Search */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-rose-600/20 border border-rose-500/40 text-rose-400 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-4 h-4" />
+          <div className="lg:col-span-7 space-y-4 text-left">
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-600/15 border border-rose-500/30 text-rose-400 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5" />
               <span>Certified Dealership Digital Showroom</span>
             </div>
 
-            <div className="space-y-3">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
-                FIND YOUR <br />
-                <span className="text-rose-600">DREAM CAR</span>
+            <div className="space-y-1.5">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                FIND YOUR <span className="text-rose-600">DREAM CAR</span>
               </h1>
-              <p className="text-base sm:text-lg text-zinc-300 max-w-xl font-normal leading-relaxed">
-                Quality certified vehicles, transparent pricing, verified real-time availability, and direct consultant support.
+              <p className="text-xs sm:text-sm text-zinc-400 max-w-lg leading-relaxed">
+                Quality verified vehicles, transparent pricing, live inventory statuses, and direct consultant support.
               </p>
             </div>
 
-            {/* Quick Search Box */}
-            <div className="bg-zinc-900 border border-zinc-700 p-5 rounded-2xl shadow-2xl backdrop-blur-md">
-              <form onSubmit={handleQuickSearch} className="space-y-4">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            {/* Compact Search Bar */}
+            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl shadow-lg">
+              <form onSubmit={handleQuickSearch} className="space-y-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                   {/* Category */}
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1.5">Category</label>
+                    <label className="block text-zinc-400 font-medium mb-1">Category</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-xs font-medium focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
                     >
                       <option value="all">All Categories</option>
                       <option value="sedan">Sedan</option>
@@ -94,26 +88,26 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
 
                   {/* Price Range */}
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1.5">Price Range</label>
+                    <label className="block text-zinc-400 font-medium mb-1">Price Range</label>
                     <select
                       value={priceRange}
                       onChange={(e) => setPriceRange(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-xs font-medium focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
                     >
                       <option value="all">Any Budget</option>
                       <option value="under700k">Under ₱700,000</option>
-                      <option value="700k-1m">₱700k – ₱1,000,000</option>
-                      <option value="above1m">Above ₱1,000,000</option>
+                      <option value="700k-1m">₱700k – ₱1M</option>
+                      <option value="above1m">Above ₱1M</option>
                     </select>
                   </div>
 
                   {/* Transmission */}
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1.5">Transmission</label>
+                    <label className="block text-zinc-400 font-medium mb-1">Transmission</label>
                     <select
                       value={transmission}
                       onChange={(e) => setTransmission(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-xs font-medium focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
                     >
                       <option value="all">All</option>
                       <option value="Automatic">Automatic</option>
@@ -123,11 +117,11 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
 
                   {/* Fuel Type */}
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1.5">Fuel Type</label>
+                    <label className="block text-zinc-400 font-medium mb-1">Fuel Type</label>
                     <select
                       value={fuelType}
                       onChange={(e) => setFuelType(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-xs font-medium focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
                     >
                       <option value="all">All</option>
                       <option value="Gasoline">Gasoline</option>
@@ -136,21 +130,20 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-zinc-800">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-zinc-800">
                   {/* Popular tags */}
-                  <div className="flex items-center space-x-2 text-xs text-zinc-300 overflow-x-auto w-full sm:w-auto py-1">
-                    <span className="font-bold text-zinc-400">Popular:</span>
-                    {['Sedan', 'SUV', 'Pickup', 'Van', 'Hatchback'].map(tag => (
+                  <div className="flex items-center space-x-1.5 text-xs text-zinc-400 overflow-x-auto w-full sm:w-auto">
+                    <span className="text-zinc-500 font-medium">Popular:</span>
+                    {['Sedan', 'SUV', 'Pickup', 'Van'].map(tag => (
                       <button
                         key={tag}
                         type="button"
                         onClick={() => {
                           setCategory(tag.toLowerCase());
                           onSelectCategory(tag.toLowerCase());
-                          const catalogEl = document.getElementById('catalog-section');
-                          if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
+                          document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors"
+                        className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] transition-colors"
                       >
                         {tag}
                       </button>
@@ -159,9 +152,9 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-rose-600/30 transition-all text-xs uppercase tracking-wider"
+                    className="w-full sm:w-auto flex items-center justify-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-lg shadow transition-colors text-xs"
                   >
-                    <Search className="w-4 h-4" />
+                    <Search className="w-3.5 h-3.5" />
                     <span>Search Cars</span>
                   </button>
                 </div>
@@ -169,80 +162,72 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
             </div>
           </div>
 
-          {/* Right Showcase Hero Image */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
-            <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl bg-zinc-900">
+          {/* Right Showcase Photo */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative aspect-16/10 rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-zinc-900">
               <img
-                src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1000&q=80"
-                alt="DriveHub Featured Vehicle"
+                src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80"
+                alt="DriveHub Vehicle"
                 className="w-full h-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-70" />
 
-              {/* Floating Verified Badge */}
-              <div className="absolute bottom-4 left-4 right-4 bg-zinc-900/95 backdrop-blur-md border border-zinc-700 p-3.5 rounded-xl flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-lg bg-rose-600/20 border border-rose-500/40 flex items-center justify-center text-rose-500">
-                    <ShieldCheck className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">100% Quality Inspected</h4>
-                    <p className="text-xs text-zinc-400">Complete service records & verified titles</p>
-                  </div>
+              <div className="absolute bottom-3 left-3 right-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 p-2.5 rounded-lg flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-2">
+                  <ShieldCheck className="w-4 h-4 text-rose-500" />
+                  <span className="font-semibold text-white">100% Quality Inspected</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs uppercase font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded border border-emerald-800">
-                    Showroom Ready
-                  </span>
-                </div>
+                <span className="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
+                  Ready
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="mt-12 pt-8 border-t border-zinc-900 grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500">
-              <Car className="w-6 h-6" />
+        <div className="mt-8 pt-6 border-t border-zinc-900 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 shrink-0">
+              <Car className="w-4.5 h-4.5" />
             </div>
             <div>
-              <div className="text-xl font-bold text-white">250+</div>
-              <div className="text-xs text-zinc-400 font-medium">Quality Checked Cars</div>
+              <div className="text-base font-bold text-white leading-tight">250+</div>
+              <div className="text-[11px] text-zinc-400">Quality Checked</div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500">
-              <Layers className="w-6 h-6" />
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 shrink-0">
+              <Layers className="w-4.5 h-4.5" />
             </div>
             <div>
-              <div className="text-xl font-bold text-white">7 Categories</div>
-              <div className="text-xs text-zinc-400 font-medium">Sedan, SUV, Van, Pickup</div>
+              <div className="text-base font-bold text-white leading-tight">7 Categories</div>
+              <div className="text-[11px] text-zinc-400">Sedan, SUV, Van</div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500">
-              <Users className="w-6 h-6" />
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 shrink-0">
+              <Users className="w-4.5 h-4.5" />
             </div>
             <div>
-              <div className="text-xl font-bold text-white">1,000+</div>
-              <div className="text-xs text-zinc-400 font-medium">Happy Clients Served</div>
+              <div className="text-base font-bold text-white leading-tight">1,000+</div>
+              <div className="text-[11px] text-zinc-400">Happy Clients</div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500">
-              <Headphones className="w-6 h-6" />
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 shrink-0">
+              <Headphones className="w-4.5 h-4.5" />
             </div>
             <div>
-              <div className="text-xl font-bold text-white">Dedicated Support</div>
-              <div className="text-xs text-zinc-400 font-medium">Live Chat & AI Assistant</div>
+              <div className="text-base font-bold text-white leading-tight">24/7 Support</div>
+              <div className="text-[11px] text-zinc-400">Live Chat & AI</div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

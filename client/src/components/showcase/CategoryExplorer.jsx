@@ -7,8 +7,7 @@ import {
   Users, 
   Zap, 
   Flame,
-  ChevronRight,
-  Layers
+  ChevronRight
 } from 'lucide-react';
 
 const CATEGORY_ICON_MAP = {
@@ -25,29 +24,29 @@ export default function CategoryExplorer({ categories, selectedCategory, onSelec
   const totalCount = categories.reduce((sum, c) => sum + (c.count || 0), 0);
 
   return (
-    <section className="bg-zinc-100 border-b border-zinc-300 py-10">
+    <section className="bg-white border-b border-zinc-200 py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-2 h-6 bg-rose-600 rounded-full" />
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 uppercase">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-1.5 h-4.5 bg-rose-600 rounded-full" />
+            <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-zinc-900 uppercase">
               Browse by Category
             </h2>
           </div>
 
           <button
             onClick={() => onSelectCategory('all')}
-            className={`text-sm font-bold flex items-center space-x-1.5 transition-colors self-start sm:self-auto ${
-              selectedCategory === 'all' ? 'text-rose-600 underline' : 'text-zinc-700 hover:text-zinc-950'
+            className={`text-xs font-semibold flex items-center space-x-1 transition-colors ${
+              selectedCategory === 'all' ? 'text-rose-600 font-bold' : 'text-zinc-500 hover:text-zinc-900'
             }`}
           >
-            <span>Show All Categories ({totalCount} Units)</span>
-            <ChevronRight className="w-4 h-4" />
+            <span>All ({totalCount})</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* High-Contrast Category Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+        {/* Compact Category Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
           {categories.map((cat) => {
             const Icon = CATEGORY_ICON_MAP[cat.id.toLowerCase()] || Car;
             const isSelected = selectedCategory.toLowerCase() === cat.id.toLowerCase();
@@ -56,25 +55,26 @@ export default function CategoryExplorer({ categories, selectedCategory, onSelec
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(isSelected ? 'all' : cat.id)}
-                className={`group flex flex-col items-center text-center p-4 rounded-xl border-2 transition-all duration-150 ${
+                className={`group flex items-center space-x-2.5 p-2.5 rounded-lg border transition-all duration-150 text-left ${
                   isSelected
-                    ? 'border-rose-600 bg-white shadow-md ring-2 ring-rose-600/30'
-                    : 'border-zinc-300 bg-white hover:border-rose-400 hover:shadow-sm'
+                    ? 'border-rose-600 bg-rose-50/70 shadow-xs ring-1 ring-rose-600'
+                    : 'border-zinc-200 bg-zinc-50/50 hover:bg-zinc-100 hover:border-zinc-300'
                 }`}
               >
-                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                  isSelected ? 'bg-rose-600 text-white' : 'bg-zinc-100 text-zinc-900 group-hover:bg-rose-50 group-hover:text-rose-600'
+                <div className={`w-8 h-8 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                  isSelected ? 'bg-rose-600 text-white' : 'bg-white border border-zinc-200 text-zinc-700 group-hover:text-rose-600'
                 }`}>
-                  <Icon className="w-7 h-7" />
+                  <Icon className="w-4 h-4" />
                 </div>
 
-                <span className={`text-sm font-bold tracking-tight block ${isSelected ? 'text-rose-600' : 'text-zinc-900'}`}>
-                  {cat.name}
-                </span>
-
-                <span className="text-xs font-semibold text-zinc-500 mt-1 bg-zinc-100 px-2 py-0.5 rounded-md">
-                  {cat.count} {cat.count === 1 ? 'Unit' : 'Units'}
-                </span>
+                <div className="min-w-0 flex-1">
+                  <span className={`text-xs font-bold block truncate leading-tight ${isSelected ? 'text-rose-700' : 'text-zinc-900'}`}>
+                    {cat.name}
+                  </span>
+                  <span className="text-[10px] text-zinc-400 font-medium">
+                    {cat.count} {cat.count === 1 ? 'car' : 'cars'}
+                  </span>
+                </div>
               </button>
             );
           })}

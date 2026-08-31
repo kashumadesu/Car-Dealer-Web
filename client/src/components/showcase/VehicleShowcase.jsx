@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  SlidersHorizontal, 
   Car, 
   RotateCcw,
   ChevronLeft,
@@ -34,7 +33,6 @@ export default function VehicleShowcase({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Sync prop changes
   useEffect(() => {
     if (selectedCategory) {
       setFilters(prev => ({ ...prev, category: selectedCategory }));
@@ -68,21 +66,14 @@ export default function VehicleShowcase({
     setCurrentPage(1);
   };
 
-  // Filter and Sort Processing
   const filteredVehicles = useMemo(() => {
     return vehicles.filter(v => {
-      // Status filter
       if (filters.status === 'AVAILABLE' && v.status !== 'AVAILABLE') return false;
-      // Category filter
       if (filters.category && filters.category !== 'all' && v.categoryId.toLowerCase() !== filters.category.toLowerCase()) return false;
-      // Transmission
       if (filters.transmission && filters.transmission !== 'all' && v.transmission.toLowerCase() !== filters.transmission.toLowerCase()) return false;
-      // Fuel Type
       if (filters.fuelType && filters.fuelType !== 'all' && v.fuelType.toLowerCase() !== filters.fuelType.toLowerCase()) return false;
-      // Price
       if (filters.minPrice && v.price < Number(filters.minPrice)) return false;
       if (filters.maxPrice && v.price > Number(filters.maxPrice)) return false;
-      // Keyword search
       if (filters.search) {
         const q = filters.search.toLowerCase();
         const match = v.brand.toLowerCase().includes(q) ||
@@ -123,16 +114,15 @@ export default function VehicleShowcase({
           setSelectedCategory(cat);
           setFilters(prev => ({ ...prev, category: cat }));
           setCurrentPage(1);
-          const catalogEl = document.getElementById('catalog-section');
-          if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
         }}
       />
 
-      {/* Main Showroom Catalog Section */}
-      <div id="catalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          {/* Left Filter Sidebar */}
-          <div className="w-full lg:w-80 shrink-0">
+      {/* Main Showroom Catalog */}
+      <div id="catalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Left Filter Sidebar - Compact 250px */}
+          <div className="w-full lg:w-60 xl:w-64 shrink-0">
             <FilterSidebar
               filters={filters}
               setFilters={setFilters}
@@ -144,26 +134,26 @@ export default function VehicleShowcase({
           </div>
 
           {/* Right Inventory Grid */}
-          <div className="flex-1 w-full space-y-6">
-            {/* Catalog Top Action Bar */}
-            <div className="bg-white p-5 rounded-2xl border-2 border-zinc-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 w-full space-y-4">
+            {/* Top Bar */}
+            <div className="bg-white px-4 py-3 rounded-xl border border-zinc-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h3 className="text-lg font-black text-zinc-900 tracking-tight flex items-center space-x-2.5">
-                  <span>Available Showroom Inventory</span>
-                  <span className="text-xs bg-rose-600 text-white px-2.5 py-1 rounded-full font-bold">
-                    {filteredVehicles.length} Units Found
+                <h3 className="text-sm font-bold text-zinc-900 flex items-center space-x-2">
+                  <span>Available Inventory</span>
+                  <span className="text-xs bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full border border-rose-200 font-bold">
+                    {filteredVehicles.length} Units
                   </span>
                 </h3>
               </div>
 
-              <div className="flex items-center space-x-3 w-full sm:w-auto">
-                <span className="text-xs font-bold text-zinc-600 uppercase tracking-wider whitespace-nowrap">Sort By:</span>
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                <span className="text-xs text-zinc-500 font-medium whitespace-nowrap">Sort:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-zinc-50 border-2 border-zinc-300 text-zinc-900 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-rose-500"
+                  className="bg-zinc-50 border border-zinc-200 text-zinc-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-rose-500"
                 >
-                  <option value="newest">Featured & New Arrivals</option>
+                  <option value="newest">Featured & Newest</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="mileage-low">Lowest Mileage</option>
@@ -172,9 +162,9 @@ export default function VehicleShowcase({
               </div>
             </div>
 
-            {/* Vehicles Cards Grid */}
+            {/* Vehicle Grid - Airy 3-Column Layout */}
             {paginatedVehicles.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {paginatedVehicles.map((vehicle) => (
                   <VehicleCard
                     key={vehicle.id}
@@ -185,36 +175,36 @@ export default function VehicleShowcase({
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border-2 border-zinc-200 p-16 text-center space-y-4 shadow-sm">
-                <div className="w-16 h-16 rounded-2xl bg-zinc-100 mx-auto flex items-center justify-center text-zinc-400">
-                  <Car className="w-8 h-8" />
+              <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center space-y-3 shadow-xs">
+                <div className="w-12 h-12 rounded-xl bg-zinc-100 mx-auto flex items-center justify-center text-zinc-400">
+                  <Car className="w-6 h-6" />
                 </div>
-                <h4 className="text-lg font-bold text-zinc-900">No Vehicles Match Your Search Filters</h4>
-                <p className="text-sm text-zinc-500 max-w-md mx-auto">
-                  Try adjusting your budget slider or clearing the transmission/category filters.
+                <h4 className="text-sm font-bold text-zinc-900">No Vehicles Found</h4>
+                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+                  Try adjusting your budget or selecting a different category.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="inline-flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-5 py-3 rounded-xl transition-colors shadow-md uppercase tracking-wider"
+                  className="inline-flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-colors"
                 >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Reset All Filters</span>
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset Filters</span>
                 </button>
               </div>
             )}
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2 pt-6">
+              <div className="flex items-center justify-center space-x-1.5 pt-4">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => {
                     setCurrentPage(p => Math.max(1, p - 1));
                     document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="p-2.5 rounded-xl border-2 border-zinc-300 bg-white text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
+                  className="p-2 rounded-lg border border-zinc-200 bg-white text-zinc-600 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
 
                 {Array.from({ length: totalPages }).map((_, idx) => (
@@ -224,10 +214,10 @@ export default function VehicleShowcase({
                       setCurrentPage(idx + 1);
                       document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className={`w-10 h-10 rounded-xl text-xs font-bold transition-colors ${
+                    className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${
                       currentPage === idx + 1
-                        ? 'bg-rose-600 text-white shadow-md'
-                        : 'bg-white border-2 border-zinc-300 text-zinc-800 hover:bg-zinc-50'
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50'
                     }`}
                   >
                     {idx + 1}
@@ -240,9 +230,9 @@ export default function VehicleShowcase({
                     setCurrentPage(p => Math.min(totalPages, p + 1));
                     document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="p-2.5 rounded-xl border-2 border-zinc-300 bg-white text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
+                  className="p-2 rounded-lg border border-zinc-200 bg-white text-zinc-600 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             )}
