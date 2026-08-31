@@ -6,8 +6,9 @@ import {
   Fuel, 
   Heart, 
   GitCompare, 
-  ChevronRight,
-  ShieldCheck
+  ChevronRight, 
+  ShieldCheck,
+  MessageSquare
 } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
@@ -23,19 +24,19 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
     switch (status) {
       case 'AVAILABLE':
         return (
-          <span className="bg-emerald-600/90 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">
+          <span className="bg-emerald-600 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
             Available
           </span>
         );
       case 'RESERVED':
         return (
-          <span className="bg-amber-500/90 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">
+          <span className="bg-amber-500 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
             Reserved
           </span>
         );
       case 'SOLD':
         return (
-          <span className="bg-zinc-700/90 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">
+          <span className="bg-zinc-700 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
             Sold
           </span>
         );
@@ -45,9 +46,9 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
   };
 
   return (
-    <div className="group bg-white rounded-xl border border-zinc-200 hover:border-zinc-300 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between text-left">
-      {/* Image & Quick Action Header */}
+    <div className="group bg-white rounded-2xl border-2 border-zinc-200 hover:border-rose-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between text-left">
       <div>
+        {/* Car Photography */}
         <div className="relative aspect-16/10 overflow-hidden bg-zinc-100 cursor-pointer" onClick={() => onSelectVehicle(vehicle)}>
           <img
             src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'}
@@ -56,103 +57,103 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
           />
 
           {/* Badges Overlay */}
-          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
             {getStatusBadge(vehicle.status)}
             {vehicle.isNewArrival && (
-              <span className="bg-rose-600 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">
+              <span className="bg-rose-600 text-white text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm">
                 New Arrival
               </span>
             )}
           </div>
 
-          {/* Compare & Favorite Quick Buttons */}
-          <div className="absolute top-2.5 right-2.5 flex items-center space-x-1.5 z-10">
-            {/* Compare Toggle */}
+          {/* Compare & Favorite Buttons */}
+          <div className="absolute top-3 right-3 flex items-center space-x-2 z-10">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 compared ? removeFromCompare(vehicle.id) : addToCompare(vehicle);
               }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
+              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
                 compared 
                   ? 'bg-rose-600 text-white shadow' 
-                  : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
+                  : 'bg-zinc-950/70 text-white hover:bg-zinc-950'
               }`}
               title={compared ? 'Remove from compare' : 'Add to compare'}
             >
-              <GitCompare className="w-3.5 h-3.5" />
+              <GitCompare className="w-4 h-4" />
             </button>
 
-            {/* Favorite Toggle */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(vehicle);
               }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
+              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
                 favorited 
                   ? 'bg-rose-600 text-white shadow' 
-                  : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
+                  : 'bg-zinc-950/70 text-white hover:bg-zinc-950'
               }`}
               title={favorited ? 'Remove from favorites' : 'Save to favorites'}
             >
-              <Heart className={`w-3.5 h-3.5 ${favorited ? 'fill-current' : ''}`} />
+              <Heart className={`w-4 h-4 ${favorited ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* Content Body */}
-        <div className="p-4">
+        {/* Card Body */}
+        <div className="p-5 space-y-3">
           {/* Category & Verified Tag */}
-          <div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
-            <span className="uppercase font-semibold tracking-wider text-[10px] text-zinc-400">
+          <div className="flex items-center justify-between text-xs text-zinc-500">
+            <span className="uppercase font-bold tracking-wider text-xs text-zinc-500">
               {vehicle.categoryId} • {vehicle.condition}
             </span>
-            <span className="flex items-center space-x-1 text-emerald-600 text-[11px] font-medium">
-              <ShieldCheck className="w-3 h-3" />
-              <span>Verified</span>
+            <span className="flex items-center space-x-1 text-emerald-700 font-bold text-xs">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Verified Title</span>
             </span>
           </div>
 
           {/* Vehicle Title */}
-          <h3 
-            onClick={() => onSelectVehicle(vehicle)}
-            className="text-sm font-bold text-zinc-900 hover:text-rose-600 cursor-pointer line-clamp-1 transition-colors"
-          >
-            {vehicle.year} {vehicle.brand} {vehicle.model}
-          </h3>
-          <p className="text-xs text-zinc-500 line-clamp-1 mb-3">{vehicle.variant}</p>
+          <div>
+            <h3 
+              onClick={() => onSelectVehicle(vehicle)}
+              className="text-base sm:text-lg font-black text-zinc-900 hover:text-rose-600 cursor-pointer line-clamp-1 transition-colors tracking-tight"
+            >
+              {vehicle.year} {vehicle.brand} {vehicle.model}
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-600 font-medium line-clamp-1 mt-0.5">{vehicle.variant}</p>
+          </div>
 
-          {/* Price */}
-          <div className="flex items-baseline space-x-2 mb-4">
-            <span className="text-lg font-black text-rose-600 tracking-tight">
+          {/* Price Tag */}
+          <div className="flex items-baseline space-x-2 pt-1">
+            <span className="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
               ₱{vehicle.price.toLocaleString()}
             </span>
             {vehicle.previousPrice && (
-              <span className="text-xs text-zinc-400 line-through">
+              <span className="text-xs sm:text-sm text-zinc-400 line-through font-semibold">
                 ₱{vehicle.previousPrice.toLocaleString()}
               </span>
             )}
           </div>
 
-          {/* 4-Grid Key Specs */}
-          <div className="grid grid-cols-2 gap-2 text-xs py-2.5 border-t border-b border-zinc-100 text-zinc-600">
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span className="truncate">{vehicle.year}</span>
+          {/* 4-Grid Key Specs with High Readability */}
+          <div className="grid grid-cols-2 gap-2.5 py-3 border-t border-b border-zinc-200 text-xs sm:text-sm text-zinc-800 font-medium">
+            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
+              <Calendar className="w-4 h-4 text-rose-600 shrink-0" />
+              <span className="truncate">{vehicle.year} Model</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Gauge className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
+              <Gauge className="w-4 h-4 text-rose-600 shrink-0" />
               <span className="truncate">{vehicle.mileage.toLocaleString()} km</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Cog className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
+              <Cog className="w-4 h-4 text-rose-600 shrink-0" />
               <span className="truncate">{vehicle.transmission}</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Fuel className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <div className="flex items-center space-x-2 bg-zinc-50 p-2 rounded-lg">
+              <Fuel className="w-4 h-4 text-rose-600 shrink-0" />
               <span className="truncate">{vehicle.fuelType}</span>
             </div>
           </div>
@@ -160,21 +161,22 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
       </div>
 
       {/* Action Footer */}
-      <div className="px-4 pb-4 pt-1 flex items-center space-x-2">
+      <div className="px-5 pb-5 pt-1 flex items-center space-x-2.5">
         <button
           onClick={() => onSelectVehicle(vehicle)}
-          className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center space-x-1 transition-colors"
+          className="flex-1 bg-zinc-950 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
         >
           <span>View Details</span>
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
 
         <button
           onClick={() => onOpenChat(vehicle)}
-          className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold py-2 px-3 rounded-lg transition-colors"
+          className="bg-rose-50 hover:bg-rose-100 text-rose-600 border-2 border-rose-200 text-xs sm:text-sm font-bold py-3 px-4 rounded-xl transition-colors flex items-center space-x-1"
           title="Inquire about this vehicle"
         >
-          Chat
+          <MessageSquare className="w-4 h-4" />
+          <span>Inquire</span>
         </button>
       </div>
     </div>

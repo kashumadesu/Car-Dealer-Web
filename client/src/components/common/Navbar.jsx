@@ -13,7 +13,8 @@ import {
   LayoutDashboard,
   Layers,
   Users,
-  Info
+  Info,
+  LogIn
 } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
@@ -36,47 +37,51 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
   return (
     <header className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800 text-white select-none">
       {/* Top utility bar */}
-      <div className="hidden lg:flex items-center justify-between px-6 py-1.5 text-xs text-zinc-400 border-b border-zinc-900">
+      <div className="hidden lg:flex items-center justify-between px-8 py-2 text-xs text-zinc-300 border-b border-zinc-900">
         <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
-            <span>Official Controlled Dealership Inventory</span>
+          <div className="flex items-center space-x-2">
+            <ShieldCheck className="w-4 h-4 text-rose-500" />
+            <span className="font-medium">DriveHub Official Controlled Inventory</span>
           </div>
-          <div className="flex items-center space-x-1.5">
-            <Phone className="w-3.5 h-3.5 text-zinc-500" />
-            <span>Hotline: +63 999 888 7777</span>
+          <div className="flex items-center space-x-2">
+            <Phone className="w-4 h-4 text-zinc-400" />
+            <span className="font-medium">Direct Hotline: +63 999 888 7777</span>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Role selector */}
           <div className="relative">
             <button 
               onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-              className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-md bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 transition-colors"
             >
               <User className="w-3.5 h-3.5 text-rose-400" />
-              <span>Role: <strong className="capitalize text-white font-medium">{user.role}</strong></span>
+              <span>Account: <strong className="capitalize text-white font-semibold">{user.name} ({user.role})</strong></span>
             </button>
 
             {roleMenuOpen && (
-              <div className="absolute right-0 mt-1 w-44 bg-zinc-900 border border-zinc-800 rounded shadow-xl py-1 z-50">
+              <div className="absolute right-0 mt-1 w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
                 <button
                   onClick={() => { loginAs('customer'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-zinc-800 text-zinc-300 hover:text-white"
+                  className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-zinc-200 hover:text-white flex items-center justify-between"
                 >
-                  Customer View
+                  <span>Customer View</span>
+                  {user.role === 'customer' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
                 </button>
                 <button
                   onClick={() => { loginAs('staff'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-zinc-800 text-zinc-300 hover:text-white"
+                  className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-zinc-200 hover:text-white flex items-center justify-between"
                 >
-                  Staff / Agent View
+                  <span>Sales Agent View</span>
+                  {user.role === 'staff' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
                 </button>
                 <button
                   onClick={() => { loginAs('admin'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-zinc-800 text-zinc-300 hover:text-white"
+                  className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-zinc-200 hover:text-white flex items-center justify-between"
                 >
-                  Admin / Owner View
+                  <span>Admin / Owner Console</span>
+                  {user.role === 'admin' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
                 </button>
               </div>
             )}
@@ -84,40 +89,40 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
 
           <button 
             onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center space-x-1.5 px-2.5 py-0.5 rounded text-xs font-medium transition-colors ${
+            className={`flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-bold transition-colors ${
               isAdminMode 
-                ? 'bg-rose-600 text-white' 
-                : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
+                ? 'bg-rose-600 text-white shadow' 
+                : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800'
             }`}
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
-            <span>{isAdminMode ? 'Exit Admin' : 'Admin Panel'}</span>
+            <span>{isAdminMode ? 'Exit Admin Mode' : 'Admin Portal'}</span>
           </button>
         </div>
       </div>
 
-      {/* Main navigation */}
+      {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Logo on Left */}
           <button 
             onClick={() => { setActiveTab('showroom'); setIsAdminMode(false); }}
-            className="flex items-center space-x-3 text-left group"
+            className="flex items-center space-x-3 text-left group shrink-0"
           >
-            <div className="w-10 h-10 rounded-lg bg-rose-600 flex items-center justify-center text-white shadow-lg shadow-rose-600/30 group-hover:bg-rose-500 transition-colors">
+            <div className="w-11 h-11 rounded-xl bg-rose-600 flex items-center justify-center text-white shadow-lg shadow-rose-600/30 group-hover:bg-rose-500 transition-colors">
               <Car className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xl font-bold tracking-tight text-white flex items-center space-x-1">
+              <div className="text-2xl font-black tracking-tight text-white flex items-center space-x-1">
                 <span>Drive</span>
                 <span className="text-rose-500">Hub</span>
               </div>
-              <p className="text-[10px] tracking-wider text-zinc-400 uppercase font-medium">Auto Showroom & Sales</p>
+              <p className="text-[11px] tracking-wider text-zinc-400 uppercase font-semibold">Automotive Showroom</p>
             </div>
           </button>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center space-x-1">
+          {/* Desktop Center Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = activeTab === link.id && !isAdminMode;
@@ -125,73 +130,73 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
                 <button
                   key={link.id}
                   onClick={() => { setActiveTab(link.id); setIsAdminMode(false); }}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition-all duration-150 ${
                     isActive 
-                      ? 'text-white bg-rose-600/15 border border-rose-500/30 text-rose-400' 
-                      : 'text-zinc-300 hover:text-white hover:bg-zinc-900'
+                      ? 'text-white bg-rose-600 border-rose-600 shadow-sm' 
+                      : 'text-zinc-300 border-transparent hover:text-white hover:bg-zinc-900'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-rose-500' : 'text-zinc-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
                   <span>{link.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Action Icons */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Right Action Controls */}
+          <div className="flex items-center space-x-3">
             {/* Quick Search */}
             <button
               onClick={onOpenSearch}
-              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+              className="p-2.5 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-900 border border-transparent transition-colors"
               title="Search vehicles"
             >
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Compare Badge Button */}
+            {/* Compare Badge */}
             <button
               onClick={() => setIsCompareOpen(true)}
-              className="relative p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+              className="relative p-2.5 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-900 border border-transparent transition-colors"
               title="Vehicle Comparison"
             >
               <GitCompare className="w-5 h-5" />
               {compareList.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute top-1 right-1 bg-rose-600 text-white text-[11px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {compareList.length}
                 </span>
               )}
             </button>
 
-            {/* Favorites Badge Button */}
+            {/* Favorites Badge */}
             <button
               onClick={() => setActiveTab('favorites')}
-              className={`relative p-2 rounded-md transition-colors ${
-                activeTab === 'favorites' ? 'text-rose-500 bg-rose-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              className={`relative p-2.5 rounded-lg border transition-colors ${
+                activeTab === 'favorites' ? 'text-rose-500 bg-rose-500/15 border-rose-500/30' : 'text-zinc-300 border-transparent hover:text-white hover:bg-zinc-900'
               }`}
               title="Saved Favorites"
             >
               <Heart className="w-5 h-5" />
               {favorites.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute top-1 right-1 bg-rose-600 text-white text-[11px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {favorites.length}
                 </span>
               )}
             </button>
 
-            {/* Direct Live Chat Button */}
+            {/* Live Chat CTA Button */}
             <button
               onClick={() => onOpenLiveChat(null)}
-              className="hidden sm:flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-md shadow-sm transition-colors"
+              className="hidden sm:flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-md transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               <span>Live Chat</span>
             </button>
 
-            {/* Mobile menu toggle */}
+            {/* Mobile Menu Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900"
+              className="md:hidden p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-900"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -201,7 +206,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-zinc-900 border-t border-zinc-800 px-4 pt-2 pb-4 space-y-1">
+        <div className="md:hidden bg-zinc-900 border-t border-zinc-800 px-4 pt-3 pb-5 space-y-2 text-sm">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = activeTab === link.id && !isAdminMode;
@@ -213,11 +218,11 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
                   setIsAdminMode(false);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm font-medium text-left ${
-                  isActive ? 'bg-rose-600 text-white' : 'text-zinc-300 hover:bg-zinc-800'
+                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg font-semibold text-left ${
+                  isActive ? 'bg-rose-600 text-white' : 'text-zinc-200 hover:bg-zinc-800'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
                 <span>{link.label}</span>
               </button>
             );
@@ -229,13 +234,13 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
               setIsAdminMode(false);
               setMobileMenuOpen(false);
             }}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+            className="w-full flex items-center justify-between px-3 py-3 rounded-lg font-semibold text-zinc-200 hover:bg-zinc-800"
           >
             <span className="flex items-center space-x-3">
-              <Heart className="w-4 h-4 text-rose-500" />
+              <Heart className="w-5 h-5 text-rose-500" />
               <span>Saved Favorites</span>
             </span>
-            <span className="bg-zinc-800 text-xs px-2 py-0.5 rounded text-zinc-400">{favorites.length}</span>
+            <span className="bg-zinc-800 text-xs px-2.5 py-1 rounded text-zinc-300 font-bold">{favorites.length}</span>
           </button>
 
           <button
@@ -243,25 +248,25 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
               setIsCompareOpen(true);
               setMobileMenuOpen(false);
             }}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+            className="w-full flex items-center justify-between px-3 py-3 rounded-lg font-semibold text-zinc-200 hover:bg-zinc-800"
           >
             <span className="flex items-center space-x-3">
-              <GitCompare className="w-4 h-4 text-rose-500" />
+              <GitCompare className="w-5 h-5 text-rose-500" />
               <span>Vehicle Comparison</span>
             </span>
-            <span className="bg-zinc-800 text-xs px-2 py-0.5 rounded text-zinc-400">{compareList.length}</span>
+            <span className="bg-zinc-800 text-xs px-2.5 py-1 rounded text-zinc-300 font-bold">{compareList.length}</span>
           </button>
 
-          <div className="pt-2 border-t border-zinc-800 flex items-center justify-between">
+          <div className="pt-3 border-t border-zinc-800 flex items-center justify-between gap-3">
             <button
               onClick={() => {
                 setIsAdminMode(!isAdminMode);
                 setMobileMenuOpen(false);
               }}
-              className="flex items-center space-x-2 text-xs font-semibold px-3 py-2 rounded bg-zinc-800 text-zinc-200"
+              className="flex-1 flex items-center justify-center space-x-2 text-xs font-bold px-3 py-2.5 rounded-lg bg-zinc-800 text-zinc-100"
             >
               <LayoutDashboard className="w-4 h-4 text-rose-500" />
-              <span>{isAdminMode ? 'Exit Admin Dashboard' : 'Open Admin Dashboard'}</span>
+              <span>{isAdminMode ? 'Exit Admin' : 'Admin Console'}</span>
             </button>
 
             <button
@@ -269,9 +274,9 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
                 onOpenLiveChat(null);
                 setMobileMenuOpen(false);
               }}
-              className="flex items-center space-x-1.5 bg-rose-600 text-white text-xs font-semibold px-3 py-2 rounded"
+              className="flex-1 flex items-center justify-center space-x-2 bg-rose-600 text-white text-xs font-bold px-3 py-2.5 rounded-lg"
             >
-              <MessageSquare className="w-3.5 h-3.5" />
+              <MessageSquare className="w-4 h-4" />
               <span>Live Chat</span>
             </button>
           </div>

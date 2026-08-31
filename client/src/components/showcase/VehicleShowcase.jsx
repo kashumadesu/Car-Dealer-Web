@@ -1,15 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   SlidersHorizontal, 
   Car, 
-  ArrowUpDown, 
-  ShieldCheck, 
   RotateCcw,
-  Sparkles,
-  Award,
-  CreditCard,
-  RefreshCw,
-  Headphones,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -34,15 +27,15 @@ export default function VehicleShowcase({
     minPrice: '',
     maxPrice: '',
     search: '',
-    status: 'AVAILABLE' // default to available units
+    status: 'AVAILABLE'
   });
 
   const [sortBy, setSortBy] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 6;
 
   // Sync prop changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedCategory) {
       setFilters(prev => ({ ...prev, category: selectedCategory }));
     }
@@ -104,12 +97,10 @@ export default function VehicleShowcase({
       if (sortBy === 'price-high') return b.price - a.price;
       if (sortBy === 'mileage-low') return a.mileage - b.mileage;
       if (sortBy === 'year-new') return b.year - a.year;
-      // default newest
       return (b.isNewArrival ? 1 : 0) - (a.isNewArrival ? 1 : 0);
     });
   }, [vehicles, filters, sortBy]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage) || 1;
   const paginatedVehicles = filteredVehicles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -132,6 +123,8 @@ export default function VehicleShowcase({
           setSelectedCategory(cat);
           setFilters(prev => ({ ...prev, category: cat }));
           setCurrentPage(1);
+          const catalogEl = document.getElementById('catalog-section');
+          if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
         }}
       />
 
@@ -139,7 +132,7 @@ export default function VehicleShowcase({
       <div id="catalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Left Filter Sidebar */}
-          <div className="w-full lg:w-72 shrink-0">
+          <div className="w-full lg:w-80 shrink-0">
             <FilterSidebar
               filters={filters}
               setFilters={setFilters}
@@ -153,24 +146,24 @@ export default function VehicleShowcase({
           {/* Right Inventory Grid */}
           <div className="flex-1 w-full space-y-6">
             {/* Catalog Top Action Bar */}
-            <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="bg-white p-5 rounded-2xl border-2 border-zinc-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-base font-bold text-zinc-900 tracking-tight flex items-center space-x-2">
-                  <span>Available Inventory</span>
-                  <span className="text-xs bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full border border-rose-200 font-bold">
+                <h3 className="text-lg font-black text-zinc-900 tracking-tight flex items-center space-x-2.5">
+                  <span>Available Showroom Inventory</span>
+                  <span className="text-xs bg-rose-600 text-white px-2.5 py-1 rounded-full font-bold">
                     {filteredVehicles.length} Units Found
                   </span>
                 </h3>
               </div>
 
               <div className="flex items-center space-x-3 w-full sm:w-auto">
-                <span className="text-xs text-zinc-500 font-medium whitespace-nowrap">Sort By:</span>
+                <span className="text-xs font-bold text-zinc-600 uppercase tracking-wider whitespace-nowrap">Sort By:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-zinc-50 border border-zinc-200 text-zinc-800 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-rose-500 font-medium"
+                  className="bg-zinc-50 border-2 border-zinc-300 text-zinc-900 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-rose-500"
                 >
-                  <option value="newest">Featured & Newest</option>
+                  <option value="newest">Featured & New Arrivals</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="mileage-low">Lowest Mileage</option>
@@ -181,7 +174,7 @@ export default function VehicleShowcase({
 
             {/* Vehicles Cards Grid */}
             {paginatedVehicles.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {paginatedVehicles.map((vehicle) => (
                   <VehicleCard
                     key={vehicle.id}
@@ -192,19 +185,19 @@ export default function VehicleShowcase({
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-zinc-200 p-12 text-center space-y-4 shadow-sm">
+              <div className="bg-white rounded-2xl border-2 border-zinc-200 p-16 text-center space-y-4 shadow-sm">
                 <div className="w-16 h-16 rounded-2xl bg-zinc-100 mx-auto flex items-center justify-center text-zinc-400">
                   <Car className="w-8 h-8" />
                 </div>
-                <h4 className="text-base font-bold text-zinc-900">No Vehicles Match Your Selected Filters</h4>
-                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                  Try widening your budget range or resetting specific category and transmission parameters.
+                <h4 className="text-lg font-bold text-zinc-900">No Vehicles Match Your Search Filters</h4>
+                <p className="text-sm text-zinc-500 max-w-md mx-auto">
+                  Try adjusting your budget slider or clearing the transmission/category filters.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="inline-flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+                  className="inline-flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-5 py-3 rounded-xl transition-colors shadow-md uppercase tracking-wider"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-4 h-4" />
                   <span>Reset All Filters</span>
                 </button>
               </div>
@@ -215,20 +208,26 @@ export default function VehicleShowcase({
               <div className="flex items-center justify-center space-x-2 pt-6">
                 <button
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  className="p-2 rounded-lg border border-zinc-200 bg-white text-zinc-600 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
+                  onClick={() => {
+                    setCurrentPage(p => Math.max(1, p - 1));
+                    document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="p-2.5 rounded-xl border-2 border-zinc-300 bg-white text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
 
                 {Array.from({ length: totalPages }).map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentPage(idx + 1)}
-                    className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${
+                    onClick={() => {
+                      setCurrentPage(idx + 1);
+                      document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className={`w-10 h-10 rounded-xl text-xs font-bold transition-colors ${
                       currentPage === idx + 1
-                        ? 'bg-rose-600 text-white'
-                        : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                        ? 'bg-rose-600 text-white shadow-md'
+                        : 'bg-white border-2 border-zinc-300 text-zinc-800 hover:bg-zinc-50'
                     }`}
                   >
                     {idx + 1}
@@ -237,58 +236,16 @@ export default function VehicleShowcase({
 
                 <button
                   disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  className="p-2 rounded-lg border border-zinc-200 bg-white text-zinc-600 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
+                  onClick={() => {
+                    setCurrentPage(p => Math.min(totalPages, p + 1));
+                    document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="p-2.5 rounded-xl border-2 border-zinc-300 bg-white text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 transition-colors"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Value Proposition Section (Red/Black Footer Strip matching mockup) */}
-      <div className="bg-gradient-to-r from-rose-700 via-rose-600 to-rose-700 text-white py-8 border-y border-rose-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white shrink-0">
-              <Award className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider">Quality Cars</h5>
-              <p className="text-[11px] text-rose-100">Inspected & well-maintained</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white shrink-0">
-              <CreditCard className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider">Easy Financing</h5>
-              <p className="text-[11px] text-rose-100">Flexible payment terms</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white shrink-0">
-              <RefreshCw className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider">Trade-In Offer</h5>
-              <p className="text-[11px] text-rose-100">Best value for your car</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white shrink-0">
-              <Headphones className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider">After-Sales Support</h5>
-              <p className="text-[11px] text-rose-100">Dedicated assistance</p>
-            </div>
           </div>
         </div>
       </div>

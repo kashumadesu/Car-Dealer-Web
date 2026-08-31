@@ -5,9 +5,7 @@ import {
   Send, 
   Sparkles, 
   Car, 
-  ChevronRight, 
-  MessageSquare,
-  ChevronDown
+  ChevronRight
 } from 'lucide-react';
 
 export default function AIAssistantWidget({ 
@@ -21,7 +19,7 @@ export default function AIAssistantWidget({
     {
       id: 'ai-welcome',
       isAi: true,
-      text: "Hello! I am your DriveHub Auto Assistant. I can help you find available cars within your budget, check loan requirements, or answer dealership questions.",
+      text: "Hello! I am your DriveHub Auto Assistant. I can help you search our live inventory, calculate financing terms, or answer dealership questions.",
       vehicles: [],
       chips: [
         "Find a car for me",
@@ -45,9 +43,9 @@ export default function AIAssistantWidget({
     const textToSend = queryText || inputQuery;
     if (!textToSend.trim() || loading) return;
 
-    // Special chip trigger for "Talk to an agent"
     if (textToSend.toLowerCase().includes('talk to an agent') || textToSend.toLowerCase().includes('talk to agent')) {
       onOpenLiveChat(prefilledVehicle || null);
+      setIsOpen(false);
       return;
     }
 
@@ -103,82 +101,82 @@ export default function AIAssistantWidget({
 
   return (
     <>
-      {/* Floating Widget Trigger Button */}
+      {/* Floating Trigger Button on Standard Bottom-Right */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 z-40 bg-zinc-950 hover:bg-zinc-900 text-white p-3.5 rounded-full shadow-2xl border border-zinc-800 flex items-center space-x-2.5 transition-all hover:scale-105 group"
+          className="fixed bottom-6 right-6 z-40 bg-zinc-950 hover:bg-zinc-900 text-white p-4 rounded-full shadow-2xl border-2 border-zinc-700 flex items-center space-x-3 transition-all hover:scale-105 group"
         >
-          <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center text-white group-hover:bg-rose-500 transition-colors">
-            <Bot className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-full bg-rose-600 flex items-center justify-center text-white group-hover:bg-rose-500 transition-colors shadow-md">
+            <Bot className="w-5 h-5" />
           </div>
-          <div className="text-left pr-1 hidden sm:block">
-            <span className="text-xs font-bold block">Auto Assistant</span>
-            <span className="text-[10px] text-rose-400 font-medium">Ask AI Inventory</span>
+          <div className="text-left pr-2 hidden sm:block">
+            <span className="text-sm font-black block leading-tight">Auto Assistant</span>
+            <span className="text-xs text-rose-400 font-semibold">Ask AI Inventory</span>
           </div>
         </button>
       )}
 
-      {/* Floating AI Assistant Window */}
+      {/* Floating Assistant Modal on Bottom-Right */}
       {isOpen && (
-        <div className="fixed bottom-6 left-6 z-50 w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden flex flex-col h-[560px] animate-in fade-in duration-200 text-left select-none">
+        <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm sm:max-w-md bg-white rounded-3xl shadow-2xl border-2 border-zinc-300 overflow-hidden flex flex-col h-[580px] animate-in fade-in duration-200 text-left select-none">
           {/* Header */}
-          <div className="bg-zinc-950 text-white p-4 flex items-center justify-between border-b border-zinc-800">
+          <div className="bg-zinc-950 text-white p-4 sm:p-5 flex items-center justify-between border-b border-zinc-800">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center text-white shadow-md">
-                <Bot className="w-5 h-5" />
+                <Bot className="w-6 h-6" />
               </div>
               <div>
                 <div className="flex items-center space-x-1.5">
-                  <h3 className="text-sm font-bold text-white">Auto Assistant</h3>
-                  <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+                  <h3 className="text-base font-bold text-white">Auto Assistant</h3>
+                  <Sparkles className="w-4 h-4 text-rose-400" />
                 </div>
-                <p className="text-[11px] text-zinc-400">Inventory-Aware AI • 24/7 Available</p>
+                <p className="text-xs text-zinc-400 font-medium">Inventory-Aware AI • 24/7 Available</p>
               </div>
             </div>
 
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Conversation History */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-zinc-50">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col ${msg.isAi ? 'items-start' : 'items-end'}`}
               >
                 <div
-                  className={`max-w-[88%] rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-sm ${
+                  className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm font-medium ${
                     msg.isAi
-                      ? 'bg-white border border-zinc-200 text-zinc-800 rounded-bl-none'
-                      : 'bg-rose-600 text-white rounded-br-none'
+                      ? 'bg-white border-2 border-zinc-200 text-zinc-900 rounded-bl-none'
+                      : 'bg-rose-600 text-white rounded-br-none font-semibold'
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.text}</p>
 
-                  {/* Matched Vehicle Cards inside AI Message */}
+                  {/* Matched Car Cards */}
                   {msg.vehicles && msg.vehicles.length > 0 && (
-                    <div className="mt-3 space-y-2 pt-2 border-t border-zinc-100">
+                    <div className="mt-3 space-y-2 pt-2 border-t border-zinc-200">
                       {msg.vehicles.map((car) => (
                         <div
                           key={car.id}
-                          className="bg-zinc-50 border border-zinc-200 rounded-xl p-2.5 flex items-center justify-between gap-2.5 hover:border-rose-300 transition-colors"
+                          className="bg-zinc-50 border border-zinc-300 rounded-xl p-2.5 flex items-center justify-between gap-2.5 hover:border-rose-400 transition-colors"
                         >
                           <img
                             src={car.images?.[0]}
                             alt={car.model}
-                            className="w-12 h-10 rounded-lg object-cover shrink-0"
+                            className="w-14 h-11 rounded-lg object-cover shrink-0"
                           />
                           <div className="flex-1 min-w-0">
-                            <h5 className="text-[11px] font-bold text-zinc-900 truncate">
+                            <h5 className="text-xs font-bold text-zinc-900 truncate">
                               {car.year} {car.brand} {car.model}
                             </h5>
-                            <span className="text-xs font-extrabold text-rose-600 block">
+                            <span className="text-sm font-black text-rose-600 block">
                               ₱{car.price.toLocaleString()}
                             </span>
                           </div>
@@ -187,10 +185,10 @@ export default function AIAssistantWidget({
                               onSelectVehicle(car);
                               setIsOpen(false);
                             }}
-                            className="bg-zinc-900 hover:bg-zinc-800 text-white text-[10px] font-semibold px-2.5 py-1.5 rounded-lg shrink-0 flex items-center space-x-1"
+                            className="bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold px-3 py-2 rounded-lg shrink-0 flex items-center space-x-1"
                           >
                             <span>View</span>
-                            <ChevronRight className="w-3 h-3" />
+                            <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       ))}
@@ -205,7 +203,7 @@ export default function AIAssistantWidget({
                       <button
                         key={idx}
                         onClick={() => sendQuery(chip)}
-                        className="bg-white hover:bg-rose-50 hover:border-rose-200 border border-zinc-200 text-zinc-700 hover:text-rose-700 text-[11px] font-medium px-2.5 py-1 rounded-full shadow-xs transition-colors"
+                        className="bg-white hover:bg-rose-50 hover:border-rose-300 border border-zinc-300 text-zinc-800 hover:text-rose-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-xs transition-colors"
                       >
                         {chip}
                       </button>
@@ -216,35 +214,35 @@ export default function AIAssistantWidget({
             ))}
 
             {loading && (
-              <div className="flex items-center space-x-2 text-xs text-zinc-500 bg-white p-3 rounded-2xl rounded-bl-none border border-zinc-200 w-fit">
+              <div className="flex items-center space-x-2 text-xs font-bold text-zinc-600 bg-white p-3.5 rounded-2xl rounded-bl-none border border-zinc-200 w-fit">
                 <Bot className="w-4 h-4 text-rose-500 animate-spin" />
-                <span>Searching dealership inventory...</span>
+                <span>Checking dealership database...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Bar */}
+          {/* Query Input */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               sendQuery();
             }}
-            className="p-3 bg-white border-t border-zinc-200 flex items-center space-x-2"
+            className="p-3 sm:p-4 bg-white border-t border-zinc-200 flex items-center space-x-2"
           >
             <input
               type="text"
-              placeholder="Ask for budget, SUVs, financing..."
+              placeholder="Ask about budget, SUVs, downpayment..."
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
-              className="flex-1 bg-zinc-100 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-xs text-zinc-800 focus:outline-none focus:border-rose-500 focus:bg-white transition-colors"
+              className="flex-1 bg-zinc-100 border border-zinc-300 rounded-xl px-4 py-3 text-sm text-zinc-900 font-medium focus:outline-none focus:border-rose-500 focus:bg-white transition-colors"
             />
             <button
               type="submit"
               disabled={!inputQuery.trim() || loading}
-              className="w-10 h-10 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white flex items-center justify-center transition-colors shadow-sm"
+              className="w-11 h-11 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white flex items-center justify-center transition-colors shadow-md"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5" />
             </button>
           </form>
         </div>

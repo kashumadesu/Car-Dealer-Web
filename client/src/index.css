@@ -4,9 +4,13 @@
   :root {
     --primary: #E11D48;
     --primary-hover: #BE123C;
-    --dark-bg: #09090B;
-    --dark-card: #18181B;
-    --border-subtle: #E2E8F0;
+    --dark-bg: #0F172A;
+    --dark-card: #1E293B;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -15,13 +19,14 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
   }
 }
 
 /* Minimalist sleek custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
