@@ -9,8 +9,7 @@ import {
   Layers
 } from 'lucide-react';
 
-export default function HeroSection({ onSearch, onSelectCategory }) {
-  const [category, setCategory] = useState('all');
+export default function HeroSection({ onSearch }) {
   const [priceRange, setPriceRange] = useState('all');
   const [transmission, setTransmission] = useState('all');
   const [fuelType, setFuelType] = useState('all');
@@ -30,7 +29,7 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
     }
 
     onSearch({
-      category,
+      category: 'all',
       transmission,
       fuelType,
       minPrice,
@@ -63,36 +62,17 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
               </p>
             </div>
 
-            {/* Compact Search Bar */}
+            {/* Clean 3-Field Search Bar */}
             <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl shadow-lg">
               <form onSubmit={handleQuickSearch} className="space-y-3">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                  {/* Category */}
-                  <div>
-                    <label className="block text-zinc-400 font-medium mb-1">Category</label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
-                    >
-                      <option value="all">All Categories</option>
-                      <option value="sedan">Sedan</option>
-                      <option value="suv">SUV</option>
-                      <option value="van">Van</option>
-                      <option value="pickup">Pickup</option>
-                      <option value="mpv">MPV</option>
-                      <option value="hatchback">Hatchback</option>
-                      <option value="coupe">Coupe</option>
-                    </select>
-                  </div>
-
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                   {/* Price Range */}
                   <div>
-                    <label className="block text-zinc-400 font-medium mb-1">Price Range</label>
+                    <label className="block text-zinc-400 font-medium mb-1">Budget Limit</label>
                     <select
                       value={priceRange}
                       onChange={(e) => setPriceRange(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-2 text-zinc-200 text-xs focus:outline-none focus:border-rose-500 font-medium"
                     >
                       <option value="all">Any Budget</option>
                       <option value="under700k">Under ₱700,000</option>
@@ -107,9 +87,9 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
                     <select
                       value={transmission}
                       onChange={(e) => setTransmission(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-2 text-zinc-200 text-xs focus:outline-none focus:border-rose-500 font-medium"
                     >
-                      <option value="all">All</option>
+                      <option value="all">All Transmissions</option>
                       <option value="Automatic">Automatic</option>
                       <option value="Manual">Manual</option>
                     </select>
@@ -121,41 +101,27 @@ export default function HeroSection({ onSearch, onSelectCategory }) {
                     <select
                       value={fuelType}
                       onChange={(e) => setFuelType(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:border-rose-500"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-2 text-zinc-200 text-xs focus:outline-none focus:border-rose-500 font-medium"
                     >
-                      <option value="all">All</option>
+                      <option value="all">All Fuel Types</option>
                       <option value="Gasoline">Gasoline</option>
                       <option value="Diesel">Diesel</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-zinc-800">
-                  {/* Popular tags */}
-                  <div className="flex items-center space-x-1.5 text-xs text-zinc-400 overflow-x-auto w-full sm:w-auto">
-                    <span className="text-zinc-500 font-medium">Popular:</span>
-                    {['Sedan', 'SUV', 'Pickup', 'Van'].map(tag => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => {
-                          setCategory(tag.toLowerCase());
-                          onSelectCategory(tag.toLowerCase());
-                          document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] transition-colors"
-                      >
-                        {tag}
-                      </button>
-                    ))}
+                <div className="flex items-center justify-between gap-2.5 pt-2 border-t border-zinc-800">
+                  <div className="flex items-center space-x-1.5 text-xs text-zinc-400">
+                    <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Instant Real-Time Filter</span>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto flex items-center justify-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-lg shadow transition-colors text-xs"
+                    className="flex items-center justify-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2 rounded-lg shadow transition-colors text-xs uppercase tracking-wider"
                   >
                     <Search className="w-3.5 h-3.5" />
-                    <span>Search Cars</span>
+                    <span>Search Showroom</span>
                   </button>
                 </div>
               </form>

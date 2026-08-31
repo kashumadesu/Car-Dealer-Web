@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Calendar, 
   Gauge, 
   Cog, 
   Fuel, 
@@ -107,13 +106,14 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
 
         {/* Compact Card Body */}
         <div className="p-3.5 space-y-2">
+          {/* Condition & Verified Badge (Removed redundant Category text) */}
           <div className="flex items-center justify-between text-[11px] text-zinc-400 font-medium">
-            <span className="uppercase tracking-wider">
-              {vehicle.categoryId} • {vehicle.condition}
+            <span className="uppercase tracking-wider font-semibold text-zinc-500">
+              {vehicle.condition}
             </span>
             <span className="flex items-center space-x-0.5 text-emerald-600 font-semibold">
               <ShieldCheck className="w-3 h-3" />
-              <span>Verified</span>
+              <span>Verified Title</span>
             </span>
           </div>
 
