@@ -1,0 +1,33 @@
+{
+  "name": "car-dealer-web",
+  "version": "1.0.0",
+  "description": "DriveHub: A Web-Based Car Showcase, Customer Inquiry, and Communication Management System",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kashumadesu/Car-Dealer-Web.git"
+  },
+  "keywords": [
+    "car-dealership",
+    "automotive-showroom",
+    "ai-chatbot",
+    "real-time-chat",
+    "philippine-cars"
+  ],
+  "author": "DriveHub Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3",
+    "uuid": "^14.0.2"
+  }
+}
