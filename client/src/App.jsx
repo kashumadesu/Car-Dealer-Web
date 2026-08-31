@@ -14,14 +14,39 @@ import ComparisonModal from './components/compare/ComparisonModal';
 import LiveChatModal from './components/chat/LiveChatModal';
 import AIAssistantWidget from './components/ai/AIAssistantWidget';
 import AdminDashboard from './components/admin/AdminDashboard';
+import { INITIAL_VEHICLES, INITIAL_CATEGORIES, INITIAL_EMPLOYEES } from './data/initialData';
 import { Search, X } from 'lucide-react';
 
 function AppContent() {
   const { isAdminMode } = useAuth();
-  const [activeTab, setActiveTab] = useState('showroom'); // 'showroom', 'categories', 'team', 'about', 'favorites'
-  const [vehicles, setVehicles] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [employees, setEmployees] = useState([]);
+  const [activeTab, setActiveTab] = useState('showroom');
+  const [vehicles, setVehicles] = useState(() => {
+    try {
+      const saved = localStorage.getItem('drivehub_vehicles');
+      return saved ? JSON.parse(saved) : INITIAL_VEHICLES;
+    } catch {
+      return INITIAL_VEHICLES;
+    }
+  });
+
+  const [categories, setCategories] = useState(() => {
+    try {
+      const saved = localStorage.getItem('drivehub_categories');
+      return saved ? JSON.parse(saved) : INITIAL_CATEGORIES;
+    } catch {
+      return INITIAL_CATEGORIES;
+    }
+  });
+
+  const [employees, setEmployees] = useState(() => {
+    try {
+      const saved = localStorage.getItem('drivehub_employees');
+      return saved ? JSON.parse(saved) : INITIAL_EMPLOYEES;
+    } catch {
+      return INITIAL_EMPLOYEES;
+    }
+  });
+
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -35,33 +60,54 @@ function AppContent() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [quickSearchInput, setQuickSearchInput] = useState('');
 
+  // Sync with API when available
   useEffect(() => {
     fetchAllData();
   }, []);
 
   const fetchAllData = async () => {
     try {
-      const [vRes, cRes, eRes] = await Promise.all([
+      const [vRes, cRes, eRes] = await Promise.allSettled([
         fetch('/api/vehicles?status=ALL'),
         fetch('/api/categories'),
         fetch('/api/employees')
       ]);
 
-      if (vRes.ok) setVehicles(await vRes.json());
-      if (cRes.ok) setCategories(await cRes.json());
-      if (eRes.ok) setEmployees(await eRes.json());
+      if (vRes.status === 'fulfilled' && vRes.value.ok) {
+        const vData = await vRes.value.json();
+        if (Array.isArray(vData) && vData.length > 0) {
+          setVehicles(vData);
+          localStorage.setItem('drivehub_vehicles', JSON.stringify(vData));
+        }
+      }
+      if (cRes.status === 'fulfilled' && cRes.value.ok) {
+        const cData = await cRes.value.json();
+        if (Array.isArray(cData) && cData.length > 0) {
+          setCategories(cData);
+          localStorage.setItem('drivehub_categories', JSON.stringify(cData));
+        }
+      }
+      if (eRes.status === 'fulfilled' && eRes.value.ok) {
+        const eData = await eRes.value.json();
+        if (Array.isArray(eData) && eData.length > 0) {
+          setEmployees(eData);
+          localStorage.setItem('drivehub_employees', JSON.stringify(eData));
+        }
+      }
     } catch (err) {
-      console.error('Failed to load initial data:', err);
+      console.warn('Backend API offline or cold-starting; using robust local inventory data.', err);
     }
   };
 
-  const handleOpenLiveChat = (vehicle, agent) => {
+  const handleOpenLiveChat = (vehicle) => {
     setChatVehicleContext(vehicle || null);
+    setIsAiAssistantOpen(false);
     setIsLiveChatOpen(true);
   };
 
   const handleOpenAiAssistant = (vehicle) => {
     setAiVehicleContext(vehicle || null);
+    setIsLiveChatOpen(false);
     setIsAiAssistantOpen(true);
   };
 
@@ -86,7 +132,7 @@ function AppContent() {
       v.variant.toLowerCase().includes(q) ||
       v.categoryId.toLowerCase().includes(q)
     );
-  }).slice(0, 5);
+  }).slice(0, 6);
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 font-sans antialiased text-zinc-900">
@@ -190,16 +236,16 @@ function AppContent() {
       {/* Quick Search Overlay Modal */}
       {isSearchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-zinc-950/80 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden text-left">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden text-left">
             <div className="p-4 border-b border-zinc-200 flex items-center space-x-3">
-              <Search className="w-5 h-5 text-zinc-400" />
+              <Search className="w-5 h-5 text-zinc-500" />
               <input
                 type="text"
                 autoFocus
-                placeholder="Search by brand, model, or type (e.g. Vios, SUV)..."
+                placeholder="Search Toyota, Honda, SUV, Ranger, Vios..."
                 value={quickSearchInput}
                 onChange={(e) => setQuickSearchInput(e.target.value)}
-                className="flex-1 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none"
+                className="flex-1 text-base text-zinc-900 font-medium placeholder-zinc-400 focus:outline-none"
               />
               <button
                 onClick={() => {
@@ -213,7 +259,7 @@ function AppContent() {
             </div>
 
             {quickSearchInput && (
-              <div className="p-3 divide-y divide-zinc-100 max-h-80 overflow-y-auto">
+              <div className="p-3 divide-y divide-zinc-100 max-h-96 overflow-y-auto">
                 {filteredQuickSearchResults.length > 0 ? (
                   filteredQuickSearchResults.map((car) => (
                     <div
@@ -229,18 +275,18 @@ function AppContent() {
                         <img
                           src={car.images?.[0]}
                           alt={car.model}
-                          className="w-12 h-9 rounded object-cover border border-zinc-200"
+                          className="w-14 h-10 rounded-lg object-cover border border-zinc-200"
                         />
                         <div>
-                          <strong className="text-xs font-bold text-zinc-900 block">{car.year} {car.brand} {car.model}</strong>
-                          <span className="text-[11px] text-zinc-500">{car.variant} • {car.categoryId}</span>
+                          <strong className="text-sm font-bold text-zinc-900 block">{car.year} {car.brand} {car.model}</strong>
+                          <span className="text-xs text-zinc-500 font-medium">{car.variant} • {car.categoryId}</span>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-rose-600">₱{car.price.toLocaleString()}</span>
+                      <span className="text-sm font-black text-rose-600">₱{car.price.toLocaleString()}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="py-6 text-center text-xs text-zinc-400">
+                  <div className="py-8 text-center text-sm font-semibold text-zinc-400">
                     No vehicles found matching "{quickSearchInput}"
                   </div>
                 )}
