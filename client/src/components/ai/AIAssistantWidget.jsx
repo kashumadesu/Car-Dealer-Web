@@ -13,6 +13,68 @@ import {
 } from 'lucide-react';
 import { INITIAL_VEHICLES } from '../../data/initialData';
 
+// Helper to render markdown bold (**text**), bullet points, and italic (*text*) cleanly
+function FormattedMessage({ text }) {
+  if (!text) return null;
+
+  // Split by newlines
+  const lines = text.split('\n');
+
+  return (
+    <div className="space-y-1 text-xs leading-relaxed">
+      {lines.map((line, lIdx) => {
+        if (!line.trim()) {
+          return <div key={lIdx} className="h-1.5" />;
+        }
+
+        // Format bold (**...**) and italic (*...*) in inline segments
+        const parseInline = (str) => {
+          // Match **bold** or *italic*
+          const regex = /(\*\*.*?\*\*|\*.*?\*)/g;
+          const parts = str.split(regex);
+
+          return parts.map((part, pIdx) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              return (
+                <strong key={pIdx} className="font-bold text-zinc-900">
+                  {part.slice(2, -2)}
+                </strong>
+              );
+            }
+            if (part.startsWith('*') && part.endsWith('*')) {
+              return (
+                <em key={pIdx} className="italic text-zinc-600">
+                  {part.slice(1, -1)}
+                </em>
+              );
+            }
+            return <span key={pIdx}>{part}</span>;
+          });
+        };
+
+        const trimmed = line.trimStart();
+        const isBullet = trimmed.startsWith('• ') || trimmed.startsWith('- ');
+        const isNumbered = /^\d+\.\s/.test(trimmed);
+
+        if (isBullet || isNumbered) {
+          const bulletContent = isBullet 
+            ? trimmed.slice(2) 
+            : trimmed.replace(/^\d+\.\s/, '');
+
+          return (
+            <div key={lIdx} className="flex items-start space-x-1.5 pl-1.5">
+              <span className="text-rose-600 font-bold shrink-0 mt-0.5">•</span>
+              <span className="flex-1">{parseInline(bulletContent)}</span>
+            </div>
+          );
+        }
+
+        return <p key={lIdx}>{parseInline(line)}</p>;
+      })}
+    </div>
+  );
+}
+
 // Comprehensive Automotive Knowledge Engine
 const AUTOMOTIVE_KNOWLEDGE = [
   {
@@ -318,7 +380,8 @@ export default function AIAssistantWidget({
                       : 'bg-rose-600 text-white rounded-br-none font-medium'
                   }`}
                 >
-                  <div className="whitespace-pre-line text-xs">{msg.text}</div>
+                  {/* Formatted Markdown (Bold, Bullets, Italics) */}
+                  <FormattedMessage text={msg.text} />
 
                   {/* Matched Car Cards */}
                   {msg.vehicles && msg.vehicles.length > 0 && (
