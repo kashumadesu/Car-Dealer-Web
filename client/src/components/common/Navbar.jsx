@@ -11,9 +11,8 @@ import {
   Phone, 
   MessageSquare, 
   LayoutDashboard,
-  Layers,
-  Users,
-  Info
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
@@ -22,9 +21,9 @@ import { useAuth } from '../../context/AuthContext';
 export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLiveChat }) {
   const { favorites } = useFavorites();
   const { compareList, setIsCompareOpen } = useCompare();
-  const { user, isAdminMode, setIsAdminMode, loginAs } = useAuth();
+  const { user, isAdminMode, setIsAdminMode, promptSignIn, signOut, loginAs } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const navLinks = [
     { id: 'showroom', label: 'Showroom' },
@@ -35,7 +34,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
 
   return (
     <header className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800 text-white select-none">
-      {/* Top Utility Bar - Slim & Subtle */}
+      {/* Top Utility Bar */}
       <div className="hidden lg:flex items-center justify-between px-8 py-1.5 text-xs text-zinc-400 border-b border-zinc-900">
         <div className="flex items-center space-x-5">
           <div className="flex items-center space-x-1.5">
@@ -49,61 +48,83 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Role selector */}
-          <div className="relative">
-            <button 
-              onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-              className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition-colors text-xs"
+          {user ? (
+            <div className="relative">
+              <button 
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 transition-colors text-xs"
+              >
+                <User className="w-3 h-3 text-rose-400" />
+                <span>Hi, <strong className="text-white font-bold">{user.fullName || user.username}</strong></span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-1 w-52 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl py-1 z-50 text-xs text-left">
+                  <div className="px-3 py-2 border-b border-zinc-800 text-[11px] text-zinc-400">
+                    Signed in as: <strong className="text-white block truncate">{user.fullName}</strong>
+                    <span className="text-[10px] text-rose-400 uppercase font-semibold">({user.role})</span>
+                  </div>
+
+                  <button
+                    onClick={() => { setActiveTab('favorites'); setUserMenuOpen(false); }}
+                    className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center space-x-2"
+                  >
+                    <Heart className="w-3.5 h-3.5 text-rose-500" />
+                    <span>My Saved Favorites ({favorites.length})</span>
+                  </button>
+
+                  {(user.role === 'admin' || user.role === 'staff') && (
+                    <button
+                      onClick={() => { setIsAdminMode(!isAdminMode); setUserMenuOpen(false); }}
+                      className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-rose-400 hover:text-rose-300 flex items-center space-x-2"
+                    >
+                      <LayoutDashboard className="w-3.5 h-3.5" />
+                      <span>{isAdminMode ? 'Exit Admin Mode' : 'Admin Control Panel'}</span>
+                    </button>
+                  )}
+
+                  <div className="border-t border-zinc-800 my-1" />
+
+                  <button
+                    onClick={() => { signOut(); setUserMenuOpen(false); }}
+                    className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center space-x-2"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => promptSignIn('Sign in with your Name and Account to access live messaging, chat with consultants, and save favorites.')}
+              className="flex items-center space-x-1.5 px-3 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-colors shadow-xs"
             >
-              <User className="w-3 h-3 text-rose-400" />
-              <span>{user.name} (<span className="capitalize text-zinc-200 font-semibold">{user.role}</span>)</span>
+              <LogIn className="w-3 h-3" />
+              <span>Sign In / Register</span>
             </button>
+          )}
 
-            {roleMenuOpen && (
-              <div className="absolute right-0 mt-1 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl py-1 z-50 text-xs">
-                <button
-                  onClick={() => { loginAs('customer'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center justify-between"
-                >
-                  <span>Customer View</span>
-                  {user.role === 'customer' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                </button>
-                <button
-                  onClick={() => { loginAs('staff'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center justify-between"
-                >
-                  <span>Sales Agent View</span>
-                  {user.role === 'staff' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                </button>
-                <button
-                  onClick={() => { loginAs('admin'); setRoleMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center justify-between"
-                >
-                  <span>Admin Console</span>
-                  {user.role === 'admin' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                </button>
-              </div>
-            )}
-          </div>
-
-          <button 
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center space-x-1 px-2.5 py-0.5 rounded text-xs font-semibold transition-colors ${
-              isAdminMode 
-                ? 'bg-rose-600 text-white' 
-                : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
-            }`}
-          >
-            <LayoutDashboard className="w-3 h-3" />
-            <span>{isAdminMode ? 'Exit Admin' : 'Admin Panel'}</span>
-          </button>
+          {user && (user.role === 'admin' || user.role === 'staff') && (
+            <button 
+              onClick={() => setIsAdminMode(!isAdminMode)}
+              className={`flex items-center space-x-1 px-2.5 py-0.5 rounded text-xs font-semibold transition-colors ${
+                isAdminMode 
+                  ? 'bg-rose-600 text-white' 
+                  : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
+              }`}
+            >
+              <LayoutDashboard className="w-3 h-3" />
+              <span>{isAdminMode ? 'Exit Admin' : 'Admin Panel'}</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Main Navigation Bar - Slim 60px Height */}
+      {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-15">
-          {/* Logo on Left */}
+          {/* Logo */}
           <button 
             onClick={() => { setActiveTab('showroom'); setIsAdminMode(false); }}
             className="flex items-center space-x-2.5 text-left group shrink-0"
@@ -140,7 +161,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
             })}
           </nav>
 
-          {/* Right Action Icons & Live Chat */}
+          {/* Right Action Icons */}
           <div className="flex items-center space-x-2">
             {/* Quick Search */}
             <button
@@ -159,7 +180,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
             >
               <GitCompare className="w-4.5 h-4.5" />
               {compareList.length > 0 && (
-                <span className="absolute 0 top-0.5 right-0.5 bg-rose-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 bg-rose-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {compareList.length}
                 </span>
               )}
@@ -167,7 +188,13 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
 
             {/* Favorites Badge */}
             <button
-              onClick={() => setActiveTab('favorites')}
+              onClick={() => {
+                if (!user) {
+                  promptSignIn('Sign in to view and manage your saved vehicles.');
+                } else {
+                  setActiveTab('favorites');
+                }
+              }}
               className={`relative p-2 rounded-md transition-colors ${
                 activeTab === 'favorites' ? 'text-rose-500 bg-rose-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
@@ -181,9 +208,15 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
               )}
             </button>
 
-            {/* Live Chat Button */}
+            {/* Live Chat CTA Button */}
             <button
-              onClick={() => onOpenLiveChat(null)}
+              onClick={() => {
+                if (!user) {
+                  promptSignIn('Sign in with your Name so our sales representatives know who they are speaking with.');
+                } else {
+                  onOpenLiveChat(null);
+                }
+              }}
               className="hidden sm:flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -203,7 +236,32 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-zinc-900 border-t border-zinc-800 px-4 py-3 space-y-1.5 text-xs">
+        <div className="md:hidden bg-zinc-900 border-t border-zinc-800 px-4 py-3 space-y-2 text-xs">
+          {user ? (
+            <div className="p-2.5 bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-between">
+              <div>
+                <strong className="text-white block">{user.fullName}</strong>
+                <span className="text-[10px] text-zinc-400">@{user.username}</span>
+              </div>
+              <button
+                onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                className="text-xs text-rose-400 font-semibold"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                promptSignIn('Sign in to chat with agents and save vehicles.');
+              }}
+              className="w-full py-2 bg-rose-600 text-white font-bold rounded-lg text-center"
+            >
+              Sign In / Register
+            </button>
+          )}
+
           {navLinks.map((link) => {
             const isActive = activeTab === link.id && !isAdminMode;
             return (
@@ -222,54 +280,6 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, onOpenLi
               </button>
             );
           })}
-          
-          <button
-            onClick={() => {
-              setActiveTab('favorites');
-              setIsAdminMode(false);
-              setMobileMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-md font-semibold text-zinc-300 hover:bg-zinc-800"
-          >
-            <span className="flex items-center space-x-2">
-              <Heart className="w-3.5 h-3.5 text-rose-500" />
-              <span>Favorites ({favorites.length})</span>
-            </span>
-          </button>
-
-          <button
-            onClick={() => {
-              setIsCompareOpen(true);
-              setMobileMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-md font-semibold text-zinc-300 hover:bg-zinc-800"
-          >
-            <span className="flex items-center space-x-2">
-              <GitCompare className="w-3.5 h-3.5 text-rose-500" />
-              <span>Compare ({compareList.length})</span>
-            </span>
-          </button>
-
-          <div className="pt-2 border-t border-zinc-800 flex items-center justify-between gap-2">
-            <button
-              onClick={() => {
-                setIsAdminMode(!isAdminMode);
-                setMobileMenuOpen(false);
-              }}
-              className="flex-1 text-center py-2 rounded bg-zinc-800 text-zinc-200 font-semibold"
-            >
-              {isAdminMode ? 'Exit Admin' : 'Admin Panel'}
-            </button>
-            <button
-              onClick={() => {
-                onOpenLiveChat(null);
-                setMobileMenuOpen(false);
-              }}
-              className="flex-1 text-center py-2 rounded bg-rose-600 text-white font-bold"
-            >
-              Live Chat
-            </button>
-          </div>
         </div>
       )}
     </header>

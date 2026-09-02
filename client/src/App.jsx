@@ -11,9 +11,11 @@ import TeamSection from './components/team/TeamSection';
 import AboutView from './components/showcase/AboutView';
 import FavoritesView from './components/showcase/FavoritesView';
 import ComparisonModal from './components/compare/ComparisonModal';
+import CompareFloatingBar from './components/compare/CompareFloatingBar';
 import LiveChatModal from './components/chat/LiveChatModal';
 import AIAssistantWidget from './components/ai/AIAssistantWidget';
 import AdminDashboard from './components/admin/AdminDashboard';
+import AuthModal from './components/auth/AuthModal';
 import { INITIAL_VEHICLES, INITIAL_CATEGORIES, INITIAL_EMPLOYEES } from './data/initialData';
 import { Search, X } from 'lucide-react';
 
@@ -48,7 +50,6 @@ function AppContent() {
   });
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
   // Live Chat & AI Assistant States
   const [isLiveChatOpen, setIsLiveChatOpen] = useState(false);
@@ -116,13 +117,6 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setSelectedVehicle(null);
-    setActiveTab('showroom');
-    window.scrollTo({ top: 400, behavior: 'smooth' });
-  };
-
   const filteredQuickSearchResults = vehicles.filter(v => {
     if (!quickSearchInput.trim()) return false;
     const q = quickSearchInput.toLowerCase();
@@ -165,8 +159,7 @@ function AppContent() {
             categories={categories}
             onSelectVehicle={handleSelectVehicle}
             onOpenChat={handleOpenLiveChat}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
+            onNavigateCategories={() => setActiveTab('categories')}
           />
         ) : activeTab === 'categories' ? (
           <CategoriesView
@@ -210,7 +203,9 @@ function AppContent() {
         />
       )}
 
-      {/* Modals & Floating Widgets */}
+      {/* Floating Compare Bar & Modal */}
+      <CompareFloatingBar />
+
       <ComparisonModal
         onSelectVehicle={handleSelectVehicle}
         onOpenChat={handleOpenLiveChat}
@@ -220,6 +215,10 @@ function AppContent() {
         }}
       />
 
+      {/* Auth Modal (Sign In / Register) */}
+      <AuthModal />
+
+      {/* Live Chat Modal */}
       <LiveChatModal
         isOpen={isLiveChatOpen}
         onClose={() => setIsLiveChatOpen(false)}
@@ -227,6 +226,7 @@ function AppContent() {
         employees={employees}
       />
 
+      {/* AI Assistant Widget */}
       <AIAssistantWidget
         isOpen={isAiAssistantOpen}
         setIsOpen={setIsAiAssistantOpen}

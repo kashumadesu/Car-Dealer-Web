@@ -14,13 +14,11 @@ import {
   CheckCircle2, 
   Calculator, 
   Phone, 
-  Mail, 
-  Share2, 
-  ExternalLink,
-  ChevronRight
+  Mail
 } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function VehicleDetailPage({ 
   vehicle, 
@@ -32,6 +30,7 @@ export default function VehicleDetailPage({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
+  const { user, promptSignIn } = useAuth();
 
   // Financing Calculator State
   const [downPaymentPercent, setDownPaymentPercent] = useState(30);
@@ -45,7 +44,6 @@ export default function VehicleDetailPage({
     'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
   ];
 
-  // Assigned sales rep (default to first employee)
   const assignedAgent = employees?.[0] || {
     name: 'John Reyes',
     position: 'Sales Manager',
@@ -54,12 +52,27 @@ export default function VehicleDetailPage({
     profileImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'
   };
 
-  // Financing Calculation: Price * (1 - DP%) * (1 + annualRate*years) / months
   const principal = vehicle.price * (1 - downPaymentPercent / 100);
   const estimatedAnnualInterest = 0.085; // 8.5% annual rate
   const totalWithInterest = principal * (1 + (estimatedAnnualInterest * (loanTermMonths / 12)));
   const monthlyPayment = Math.round(totalWithInterest / loanTermMonths);
   const downPaymentAmount = Math.round(vehicle.price * (downPaymentPercent / 100));
+
+  const handleFavoriteClick = () => {
+    if (!user) {
+      promptSignIn('Sign in to save this vehicle to your personal favorites.');
+      return;
+    }
+    toggleFavorite(vehicle);
+  };
+
+  const handleChatClick = () => {
+    if (!user) {
+      promptSignIn('Sign in with your Name so our sales agent knows who is inquiring about this vehicle.');
+      return;
+    }
+    onOpenChat(vehicle);
+  };
 
   return (
     <div className="bg-zinc-50 min-h-screen py-8 text-left">
@@ -88,7 +101,7 @@ export default function VehicleDetailPage({
             </button>
 
             <button
-              onClick={() => toggleFavorite(vehicle)}
+              onClick={handleFavoriteClick}
               className={`flex items-center space-x-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
                 favorited 
                   ? 'bg-rose-600 text-white border-rose-600' 
@@ -101,11 +114,10 @@ export default function VehicleDetailPage({
           </div>
         </div>
 
-        {/* Main Grid: Left Gallery + Right Key Specs */}
+        {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
-          {/* Left 7 Columns: Multi-Photo Gallery */}
+          {/* Left 7 Columns: Gallery */}
           <div className="lg:col-span-7 space-y-4">
-            {/* Main Stage Image */}
             <div className="relative aspect-16/10 rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-200 shadow-sm">
               <img
                 src={images[activeImageIndex]}
@@ -113,7 +125,6 @@ export default function VehicleDetailPage({
                 className="w-full h-full object-cover object-center"
               />
 
-              {/* Status Badge */}
               <div className="absolute top-4 left-4">
                 <span className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider text-white shadow-md ${
                   vehicle.status === 'AVAILABLE' ? 'bg-emerald-600' :
@@ -123,13 +134,11 @@ export default function VehicleDetailPage({
                 </span>
               </div>
 
-              {/* Image Counter */}
               <div className="absolute bottom-4 right-4 bg-zinc-950/70 text-white text-xs font-semibold px-2.5 py-1 rounded-md backdrop-blur-sm">
                 {activeImageIndex + 1} / {images.length} Photos
               </div>
             </div>
 
-            {/* Thumbnail Strip */}
             {images.length > 1 && (
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {images.map((img, idx) => (
@@ -154,7 +163,7 @@ export default function VehicleDetailPage({
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs text-zinc-500">
                 <span className="uppercase font-semibold tracking-wider text-[11px] text-zinc-400">
-                  {vehicle.categoryId} • {vehicle.condition}
+                  {vehicle.condition}
                 </span>
                 <span className="flex items-center space-x-1 text-emerald-600 font-semibold text-xs">
                   <ShieldCheck className="w-4 h-4" />
@@ -182,12 +191,12 @@ export default function VehicleDetailPage({
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-rose-700 font-medium mt-1 flex items-center space-x-1">
+                <p className="text-[11px] text-rose-700 font-medium mt-1">
                   <span>Estimated financing from ₱{monthlyPayment.toLocaleString()}/month</span>
                 </p>
               </div>
 
-              {/* Quick Specs Overview 4-grid */}
+              {/* Quick Specs Overview */}
               <div className="grid grid-cols-2 gap-3 py-2 text-xs text-zinc-700">
                 <div className="bg-zinc-50 p-2.5 rounded-lg border border-zinc-100 flex items-center space-x-2.5">
                   <Gauge className="w-4 h-4 text-rose-600 shrink-0" />
@@ -226,7 +235,7 @@ export default function VehicleDetailPage({
             {/* Primary Action Buttons */}
             <div className="space-y-2.5 pt-6 border-t border-zinc-100">
               <button
-                onClick={() => onOpenChat(vehicle)}
+                onClick={handleChatClick}
                 className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-rose-600/25 transition-all text-sm"
               >
                 <MessageSquare className="w-4 h-4" />
@@ -244,11 +253,9 @@ export default function VehicleDetailPage({
           </div>
         </div>
 
-        {/* Lower Details: Specs Table, Features, Description, Loan Calculator */}
+        {/* Lower Details */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left 8 Cols: Specs Table + Features + Description */}
           <div className="lg:col-span-8 space-y-8">
-            {/* Vehicle Full Specs Table */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
               <div className="flex items-center space-x-2 pb-4 border-b border-zinc-100 mb-4">
                 <FileText className="w-5 h-5 text-rose-600" />
@@ -293,7 +300,6 @@ export default function VehicleDetailPage({
               </div>
             </div>
 
-            {/* Description */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
               <h3 className="text-base font-bold text-zinc-900 uppercase tracking-tight mb-3">
                 Vehicle Overview
@@ -303,7 +309,6 @@ export default function VehicleDetailPage({
               </p>
             </div>
 
-            {/* Features Checklist */}
             {vehicle.features && vehicle.features.length > 0 && (
               <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
                 <h3 className="text-base font-bold text-zinc-900 uppercase tracking-tight mb-4">
@@ -321,9 +326,7 @@ export default function VehicleDetailPage({
             )}
           </div>
 
-          {/* Right 4 Cols: Loan Calculator & Assigned Sales Rep */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Quick Loan Calculator */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-4">
               <div className="flex items-center space-x-2 pb-3 border-b border-zinc-100">
                 <Calculator className="w-4 h-4 text-rose-600" />
@@ -332,7 +335,6 @@ export default function VehicleDetailPage({
                 </h3>
               </div>
 
-              {/* Downpayment Slider */}
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-zinc-500">Downpayment ({downPaymentPercent}%)</span>
@@ -349,7 +351,6 @@ export default function VehicleDetailPage({
                 />
               </div>
 
-              {/* Loan Term Selector */}
               <div>
                 <label className="block text-xs text-zinc-500 mb-1.5">Payment Term</label>
                 <div className="grid grid-cols-3 gap-1.5 text-xs">
@@ -369,7 +370,6 @@ export default function VehicleDetailPage({
                 </div>
               </div>
 
-              {/* Calculation Result */}
               <div className="bg-zinc-900 text-white rounded-xl p-4 text-center">
                 <span className="text-[11px] text-zinc-400 uppercase tracking-wider block">Estimated Monthly</span>
                 <span className="text-2xl font-extrabold text-rose-500 mt-1 block">
@@ -379,7 +379,6 @@ export default function VehicleDetailPage({
               </div>
             </div>
 
-            {/* Assigned Consultant Card */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-4">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
                 Assigned Sales Representative
@@ -409,7 +408,7 @@ export default function VehicleDetailPage({
               </div>
 
               <button
-                onClick={() => onOpenChat(vehicle)}
+                onClick={handleChatClick}
                 className="w-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center space-x-1.5 transition-colors"
               >
                 <MessageSquare className="w-3.5 h-3.5" />

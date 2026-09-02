@@ -11,10 +11,12 @@ import {
 } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
+  const { user, promptSignIn } = useAuth();
 
   const favorited = isFavorite(vehicle.id);
   const compared = isInCompare(vehicle.id);
@@ -42,6 +44,24 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
       default:
         return null;
     }
+  };
+
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    if (!user) {
+      promptSignIn('Sign in to save this vehicle to your personal favorites.');
+      return;
+    }
+    toggleFavorite(vehicle);
+  };
+
+  const handleChatClick = (e) => {
+    e.stopPropagation();
+    if (!user) {
+      promptSignIn('Sign in with your Name so our sales agent knows who is inquiring about this vehicle.');
+      return;
+    }
+    onOpenChat(vehicle);
   };
 
   return (
@@ -81,23 +101,20 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
                   ? 'bg-rose-600 text-white shadow' 
                   : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
               }`}
-              title={compared ? 'Remove compare' : 'Add to compare'}
+              title={compared ? 'Remove from compare' : 'Add to compare'}
             >
               <GitCompare className="w-3 h-3" />
             </button>
 
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(vehicle);
-              }}
+              onClick={handleFavoriteClick}
               className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-colors ${
                 favorited 
                   ? 'bg-rose-600 text-white shadow' 
                   : 'bg-zinc-900/60 text-white hover:bg-zinc-900/90'
               }`}
-              title={favorited ? 'Remove favorite' : 'Add favorite'}
+              title={favorited ? 'Remove favorite' : 'Add favorite (requires sign in)'}
             >
               <Heart className={`w-3 h-3 ${favorited ? 'fill-current' : ''}`} />
             </button>
@@ -106,7 +123,7 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
 
         {/* Compact Card Body */}
         <div className="p-3.5 space-y-2">
-          {/* Condition & Verified Badge (Removed redundant Category text) */}
+          {/* Condition & Verified Badge */}
           <div className="flex items-center justify-between text-[11px] text-zinc-400 font-medium">
             <span className="uppercase tracking-wider font-semibold text-zinc-500">
               {vehicle.condition}
@@ -168,7 +185,7 @@ export default function VehicleCard({ vehicle, onSelectVehicle, onOpenChat }) {
         </button>
 
         <button
-          onClick={() => onOpenChat(vehicle)}
+          onClick={handleChatClick}
           className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold py-2 px-2.5 rounded-lg transition-colors flex items-center space-x-1"
           title="Inquire about this unit"
         >

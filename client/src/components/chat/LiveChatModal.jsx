@@ -3,7 +3,8 @@ import {
   X, 
   Send, 
   ShieldCheck, 
-  CheckCheck
+  CheckCheck,
+  User
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -25,27 +26,29 @@ export default function LiveChatModal({
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user) {
       initConversation();
     }
-  }, [isOpen, vehicleContext]);
+  }, [isOpen, vehicleContext, user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const initConversation = async () => {
+    const customerDisplayName = user?.fullName || user?.username || 'Valued Customer';
+
     try {
       const initialText = vehicleContext 
-        ? `Hello! Inquiring regarding the ${vehicleContext.year} ${vehicleContext.brand} ${vehicleContext.model} (₱${vehicleContext.price.toLocaleString()}). Is this unit available for test drive?`
-        : `Hello! Inquiring about available inventory and financing options.`;
+        ? `Hello! I am ${customerDisplayName}. Inquiring regarding the ${vehicleContext.year} ${vehicleContext.brand} ${vehicleContext.model} (₱${vehicleContext.price.toLocaleString()}). Is this unit available for showroom viewing or test drive?`
+        : `Hello! I am ${customerDisplayName}. Inquiring about available inventory and auto loan financing.`;
 
       const res = await fetch('/api/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: user.name,
-          customerPhone: user.phone,
+          customerName: customerDisplayName,
+          customerPhone: user?.phone || '+63 900 000 0000',
           vehicleId: vehicleContext?.id || null,
           initialMessage: initialText
         })
@@ -61,7 +64,7 @@ export default function LiveChatModal({
       setMessages([
         {
           id: 'msg-init-1',
-          senderName: user.name,
+          senderName: customerDisplayName,
           isStaff: false,
           text: vehicleContext 
             ? `Inquiring regarding ${vehicleContext.year} ${vehicleContext.brand} ${vehicleContext.model} (₱${vehicleContext.price.toLocaleString()}).`
@@ -72,7 +75,7 @@ export default function LiveChatModal({
           id: 'msg-init-2',
           senderName: `${activeAgent.name} (${activeAgent.position})`,
           isStaff: true,
-          text: `Good day! Yes, this unit is available in our showroom. Would you like to schedule a viewing slot this weekend?`,
+          text: `Good day ${customerDisplayName}! Yes, this unit is available in our showroom with complete papers. Would you like to schedule a viewing slot this weekend?`,
           createdAt: new Date().toISOString()
         }
       ]);
@@ -81,12 +84,12 @@ export default function LiveChatModal({
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || !user) return;
 
     const newMsg = {
       id: `msg-${Date.now()}`,
       senderId: user.id,
-      senderName: user.name,
+      senderName: user.fullName || user.username,
       isStaff: user.role === 'staff' || user.role === 'admin',
       text: inputText.trim(),
       createdAt: new Date().toISOString()
@@ -138,6 +141,15 @@ export default function LiveChatModal({
         >
           <X className="w-4 h-4" />
         </button>
+      </div>
+
+      {/* Customer Info Bar */}
+      <div className="bg-zinc-100 px-3 py-1.5 flex items-center justify-between border-b border-zinc-200 text-[11px] text-zinc-600">
+        <span className="flex items-center space-x-1">
+          <User className="w-3 h-3 text-rose-600" />
+          <span>Chatting as: <strong className="text-zinc-900 font-bold">{user?.fullName || user?.username}</strong></span>
+        </span>
+        <span className="text-[10px] text-zinc-400">{user?.phone}</span>
       </div>
 
       {/* Vehicle Context Bar */}
